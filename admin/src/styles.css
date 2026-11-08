@@ -10,8 +10,9 @@
   --text-muted: #6b6a66;
   --series-1: #2a78d6;
   --series-1-soft: #d6e6f8;
+  --link: #1d5fae;
   --grid: #e8e9ec;
-  --accent: #b77700;
+  --accent: #8a5800;
   --up: #0a7d32;
   --down: #b42318;
   --focus: #2a78d6;
@@ -35,6 +36,7 @@
     --text-muted: #a3a29a;
     --series-1: #3987e5;
     --series-1-soft: #1d3554;
+    --link: #7db4f2;
     --grid: #2a2a28;
     --accent: #f0b03a;
     --up: #4cc778;
@@ -53,6 +55,7 @@
   --text-muted: #a3a29a;
   --series-1: #3987e5;
   --series-1-soft: #1d3554;
+  --link: #7db4f2;
   --grid: #2a2a28;
   --accent: #f0b03a;
   --up: #4cc778;
@@ -75,7 +78,7 @@ p {
   margin: 0;
 }
 a {
-  color: var(--series-1);
+  color: var(--link);
 }
 :focus-visible {
   outline: 3px solid var(--focus);
@@ -114,15 +117,15 @@ a {
   cursor: pointer;
 }
 .btn--primary {
-  background: var(--series-1);
-  border-color: var(--series-1);
+  background: var(--link);
+  border-color: var(--link);
   color: #fff;
   font-weight: 700;
 }
 .btn--link {
   border: 0;
   background: none;
-  color: var(--series-1);
+  color: var(--link);
   text-decoration: underline;
   padding-inline: 0;
   display: inline-flex;
@@ -268,7 +271,7 @@ a {
   cursor: pointer;
 }
 .seg button[aria-pressed='true'] {
-  background: var(--series-1);
+  background: var(--link);
   color: #fff;
   font-weight: 700;
 }

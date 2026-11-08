@@ -24,7 +24,7 @@ export function DataTable<T>({
       {rows.length === 0 ? (
         <p className="muted">{empty ?? 'אין נתונים בטווח הזה'}</p>
       ) : (
-        <div className="table-wrap">
+        <div className="table-wrap" tabIndex={0} role="region" aria-label={title}>
           <table className="table">
             <thead>
               <tr>

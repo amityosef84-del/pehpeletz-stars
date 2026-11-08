@@ -36,7 +36,7 @@ export function BarChart({ title, data, format, height = 200 }: Props) {
       <div className="chart__plot">
         <svg
           viewBox={`0 0 ${W} ${H}`}
-          role="img"
+          role="group"
           aria-label={title}
           preserveAspectRatio="none"
           style={{ direction: 'ltr' }}
@@ -60,6 +60,7 @@ export function BarChart({ title, data, format, height = 200 }: Props) {
                   width={slot}
                   height={innerH}
                   className="chart__hit"
+                  role="img"
                   onMouseEnter={() => setHover(i)}
                   onMouseLeave={() => setHover(null)}
                   onFocus={() => setHover(i)}

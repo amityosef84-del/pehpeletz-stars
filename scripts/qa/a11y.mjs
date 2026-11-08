@@ -20,6 +20,8 @@ const paths = rest.length
       '/accessibility',
       '/contact',
       '/404',
+      '/admin/',
+      '/admin/?demo',
     ];
 
 const browser = await chromium.launch();
