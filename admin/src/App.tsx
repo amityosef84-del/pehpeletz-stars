@@ -4,6 +4,7 @@ import { configured, supabase } from './lib/supabase';
 import { Login } from './pages/Login';
 import { SetPassword } from './pages/SetPassword';
 import { Analytics } from './pages/Analytics';
+import { OrderAlerts } from './components/OrderAlerts';
 
 type Gate = 'loading' | 'anon' | 'set-password' | 'not-admin' | 'admin';
 
@@ -87,6 +88,7 @@ export function App() {
         )}
       </nav>
       <main className="main">
+        <OrderAlerts demo={demo} />
         <Analytics demo={demo} />
       </main>
     </div>

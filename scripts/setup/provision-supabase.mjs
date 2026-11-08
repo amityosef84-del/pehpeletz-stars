@@ -11,6 +11,7 @@
 //  3. מגדיר Auth: site_url וכתובות redirect לאדמין
 //  4. שומר ב-Netlify: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (secret)
 import { randomBytes } from 'node:crypto';
+import * as webpush from 'web-push';
 import { readdirSync, readFileSync } from 'node:fs';
 
 const args = Object.fromEntries(
@@ -158,6 +159,44 @@ for (const [key, value, secret] of vars) {
   }
   console.log(`netlify env ${key} ✓`);
 }
+// 5. התראות הזמנה: מפתחות VAPID ל-Push וסוד משותף ל-webhook מה-DB
+const envNow = await nl(`/accounts/${account}/env?site_id=${NETLIFY_SITE}`);
+const valueOf = (k) =>
+  envNow.find((e) => e.key === k)?.values?.find((v) => v.context === 'all')?.value;
+async function putEnv(key, value) {
+  const body = { key, values: [{ value, context: 'all' }] };
+  if (envNow.some((e) => e.key === key)) {
+    await nl(`/accounts/${account}/env/${key}?site_id=${NETLIFY_SITE}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  } else {
+    await nl(`/accounts/${account}/env?site_id=${NETLIFY_SITE}`, {
+      method: 'POST',
+      body: JSON.stringify([body]),
+    });
+  }
+  console.log(`netlify env ${key} ✓`);
+}
+if (!valueOf('VAPID_PUBLIC_KEY') || !valueOf('VAPID_PRIVATE_KEY')) {
+  const v = webpush.generateVAPIDKeys();
+  await putEnv('VAPID_PUBLIC_KEY', v.publicKey);
+  await putEnv('VAPID_PRIVATE_KEY', v.privateKey);
+}
+if (!valueOf('VAPID_SUBJECT')) await putEnv('VAPID_SUBJECT', SITE_URL);
+let hookSecret = valueOf('ORDER_WEBHOOK_SECRET');
+if (!hookSecret) {
+  hookSecret = randomBytes(32).toString('hex');
+  await putEnv('ORDER_WEBHOOK_SECRET', hookSecret);
+}
+const q = (v) => `'${String(v).replace(/'/g, "''")}'`;
+await sql(
+  ref,
+  `insert into ops.config (key, value) values ('order_webhook_url', ${q(`${SITE_URL}/api/order-notify`)}), ('order_webhook_secret', ${q(hookSecret)})
+   on conflict (key) do update set value = excluded.value`,
+);
+console.log('order webhook configured in the database');
+
 console.log(
   `done. project ref: ${ref}. Trigger a Netlify deploy so the new variables take effect.`,
 );

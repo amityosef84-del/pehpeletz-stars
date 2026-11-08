@@ -38,6 +38,13 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 
+# ה-Service Worker של האדמין: בלי cache כדי שעדכונים ייכנסו מיד
+[[headers]]
+  for = "/admin/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/admin/"
+
 # נכסים עם hash בשם הקובץ: cache לשנה.
 [[headers]]
   for = "/_astro/*"

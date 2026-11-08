@@ -455,3 +455,80 @@ a {
   text-align: end;
   font-variant-numeric: tabular-nums;
 }
+
+/* ---------- התראות הזמנה ---------- */
+.alerts-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.chip {
+  font: inherit;
+  min-height: 40px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-1);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.chip--on {
+  border-color: var(--up);
+  color: var(--up);
+  font-weight: 700;
+}
+.alerts-panel {
+  margin-bottom: 16px;
+  display: grid;
+  gap: 10px;
+}
+.alerts-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.install h3 {
+  font-size: 0.95rem;
+  margin: 6px 0 2px;
+}
+.toasts {
+  position: fixed;
+  z-index: 100;
+  inset-inline-start: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  display: grid;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #0f5132;
+  color: #fff;
+  box-shadow: 0 12px 30px -8px rgb(0 0 0 / 0.5);
+  animation: toast-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.toast div {
+  display: grid;
+}
+.toast strong {
+  font-size: 1.05rem;
+}
+.toast__icon {
+  font-size: 1.8rem;
+}
+@keyframes toast-in {
+  from {
+    transform: translateY(20px) scale(0.9);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
