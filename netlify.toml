@@ -1,0 +1,47 @@
+# Netlify: build אחד שמוציא את דף הנחיתה ב-/ ואת האדמין ב-/admin.
+# כל הסודות מוגדרים ב-Netlify → Site configuration → Environment variables (ראו .env.example).
+
+[build]
+  command = "npm run build"
+  publish = "site/dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  node_bundler = "esbuild"
+
+# האדמין הוא SPA: כל נתיב תחת /admin מוגש מה-index שלו.
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
+# ---- כותרות אבטחה לכל האתר ----
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    X-Frame-Options = "DENY"
+
+# CSP נאכף כרגע רק באדמין. לדף הנחיתה הוא יוגדר בסוף שלב 1, ויורחב בשלב 3 עם הפיקסלים.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+
+# נכסים עם hash בשם הקובץ: cache לשנה.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/admin/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

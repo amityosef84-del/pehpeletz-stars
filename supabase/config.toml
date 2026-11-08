@@ -1,0 +1,5 @@
+# הגדרות מינימליות ל-Supabase CLI (link / db push). הפרויקט עצמו מנוהל ב-supabase.com.
+project_id = "pehpeletz-stars"
+
+[db]
+major_version = 17
