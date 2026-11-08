@@ -1,6 +1,6 @@
 /* Service Worker של מערכת הניהול: התראות Push והתקנה כאפליקציה.
    לא שומר נתונים עסקיים במטמון — רק את מעטפת האפליקציה לפתיחה מהירה. */
-const SHELL = 'pp-admin-shell-v1';
+const SHELL = 'pp-admin-shell-v2';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(SHELL).then((c) => c.addAll(['/admin/', '/admin/manifest.webmanifest'])));
@@ -37,6 +37,9 @@ self.addEventListener('push', (e) => {
       body: data.body || '',
       tag: data.tag || 'order',
       renotify: true,
+      silent: false,
+      requireInteraction: data.tag !== 'test',
+      timestamp: Date.now(),
       dir: 'rtl',
       lang: 'he',
       icon: '/admin/icons/icon-192.png',

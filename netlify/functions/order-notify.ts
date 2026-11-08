@@ -27,10 +27,13 @@ export default async (req: Request): Promise<Response> => {
   if (!secretOk(req.headers.get('x-webhook-secret'))) return json({ error: 'unauthorized' }, 401);
   const b = await readJson<Body>(req, 4_000);
   if (!b?.order_number) return json({ error: 'bad_request' }, 400);
+  const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const amount = b.total !== undefined && b.total !== null ? ils(Number(b.total)) : '';
   const r = await sendPush({
-    title: `💰 הזמנה חדשה #${b.order_number}`,
-    body: [b.items, b.total !== undefined ? ils(b.total) : ''].filter(Boolean).join(' · '),
-    url: `/admin/?order=${encodeURIComponent(String(b.order_number))}`,
+    // מספר ההזמנה והסכום בכותרת: נראים גם בהתראה מקופלת על מסך הנעילה
+    title: `💰 הזמנה #${b.order_number}${amount ? ` · ${amount}` : ''}`,
+    body: b.items ? `${b.items} · לחצו לפרטי ההזמנה` : 'לחצו לפרטי ההזמנה',
+    url: b.order_id && UUID.test(b.order_id) ? `/admin/#orders/${b.order_id}` : '/admin/#orders',
     tag: `order-${b.order_number}`,
     sound: true,
   });

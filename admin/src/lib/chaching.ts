@@ -1,5 +1,6 @@
 /**
- * צליל "קאצ'ינג" של קופה רושמת, מסונתז ב-Web Audio (בלי קובץ שמע).
+ * צליל המכירה: הקובץ /admin/sounds/sale.mp3 (נטען פעם אחת לזיכרון).
+ * אם הקובץ עוד לא נטען או נכשל, מושמע "קאצ'ינג" מסונתז ב-Web Audio כגיבוי.
  * דפדפנים דורשים לחיצה אחת של המשתמש לפני השמעת צליל: unlockAudio() בלחיצה על "הפעלת צליל".
  */
 let ctx: AudioContext | null = null;
@@ -14,10 +15,28 @@ function audio(): AudioContext | null {
   return ctx;
 }
 
+const SOUND_URL = '/admin/sounds/sale.mp3';
+let sale: AudioBuffer | null = null;
+let loading: Promise<void> | null = null;
+
+function loadSale(a: AudioContext): Promise<void> {
+  loading ??= fetch(SOUND_URL)
+    .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))))
+    .then((b) => a.decodeAudioData(b))
+    .then((buf) => {
+      sale = buf;
+    })
+    .catch(() => {
+      loading = null; // ננסה שוב בפעם הבאה; בינתיים הצליל המסונתז
+    });
+  return loading;
+}
+
 export async function unlockAudio(): Promise<boolean> {
   const a = audio();
   if (!a) return false;
   if (a.state === 'suspended') await a.resume();
+  void loadSale(a);
   return a.state === 'running';
 }
 
@@ -49,6 +68,20 @@ function bell(a: AudioContext, out: AudioNode, t: number, freq: number, gain: nu
 export function playChaChing(volume = 0.8) {
   const a = audio();
   if (!a || a.state !== 'running') return false;
+  if (sale) {
+    const src = a.createBufferSource();
+    const g = a.createGain();
+    g.gain.value = Math.min(1, volume * 1.25);
+    src.buffer = sale;
+    src.connect(g).connect(a.destination);
+    src.start();
+    return true;
+  }
+  void loadSale(a);
+  return synth(a, volume);
+}
+
+function synth(a: AudioContext, volume: number) {
   const t = a.currentTime + 0.02;
   const master = a.createGain();
   master.gain.value = volume;

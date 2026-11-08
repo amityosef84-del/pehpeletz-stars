@@ -55,9 +55,10 @@ export function OrderAlerts({ demo }: { demo: boolean }) {
       Notification.permission === 'granted'
     ) {
       navigator.serviceWorker?.getRegistration('/admin/').then((reg) =>
-        reg?.showNotification(`💰 הזמנה חדשה #${t.number}`, {
-          body: ils(t.total),
+        reg?.showNotification(`💰 הזמנה #${t.number} · ${ils(t.total)}`, {
+          body: 'לחצו לפרטי ההזמנה',
           tag: `order-${t.number}`,
+          data: { url: `/admin/#orders/${t.id}` },
           dir: 'rtl',
           lang: 'he',
         }),
@@ -231,10 +232,10 @@ export function OrderAlerts({ demo }: { demo: boolean }) {
             <span className="toast__icon" aria-hidden="true">
               💰
             </span>
-            <div>
+            <a href={`#orders/${t.id}`} className="toast__link">
               <strong>הזמנה חדשה #{t.number}</strong>
               <span>{ils(t.total)}</span>
-            </div>
+            </a>
           </div>
         ))}
       </div>

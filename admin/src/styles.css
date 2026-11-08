@@ -512,8 +512,13 @@ a {
   box-shadow: 0 12px 30px -8px rgb(0 0 0 / 0.5);
   animation: toast-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.toast div {
+.toast div,
+.toast__link {
   display: grid;
+}
+.toast__link {
+  color: inherit;
+  text-decoration: none;
 }
 .toast strong {
   font-size: 1.05rem;

@@ -10,8 +10,8 @@ export default async (req: Request): Promise<Response> => {
   if (!pushConfigured()) return json({ error: 'push_not_configured' }, 503);
   const r = await sendPush(
     {
-      title: '💰 קאצ׳ינג! הזמנת בדיקה',
-      body: 'ככה תיראה התראה על הזמנה חדשה',
+      title: '💰 הזמנה #1234 · 100\u00A0₪',
+      body: 'בדיקה: ככה תיראה התראה על רכישה, גם כשהאפליקציה סגורה',
       url: '/admin/',
       tag: 'test',
       sound: true,
