@@ -1,0 +1,104 @@
+---
+import { nav, site, whatsappLink } from '../config/site';
+import Icon from './ui/Icon.astro';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div>
+      <p class="site-footer__brand">{site.brand}</p>
+      <p class="site-footer__tag">{site.tagline}</p>
+    </div>
+    <nav aria-label="מידע ומדיניות">
+      <ul class="site-footer__links">
+        {nav.policies.map((l) => (
+          <li>
+            <a href={l.href}>{l.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="site-footer__contact">
+      <a href={whatsappLink()} rel="noopener" target="_blank" data-whatsapp="footer">
+        <Icon name="whatsapp" size={20} />
+        <span>
+          וואטסאפ: <span dir="ltr">{site.whatsappDisplay}</span>
+        </span>
+      </a>
+      <p class="site-footer__hours">שעות מענה: {site.supportHours}</p>
+    </div>
+  </div>
+  <div class="container site-footer__bottom">
+    <p>
+      © {year} {site.brand}. כל הזכויות שמורות.
+    </p>
+    <p>איורים: רמון אטלי</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    padding-block: 48px 120px;
+    border-top: 1px solid var(--stroke);
+    background: linear-gradient(180deg, transparent, rgb(2 8 14 / 0.9));
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  @media (min-width: 900px) {
+    .site-footer {
+      padding-bottom: 48px;
+    }
+  }
+  .site-footer__grid {
+    display: grid;
+    gap: 28px;
+  }
+  @media (min-width: 760px) {
+    .site-footer__grid {
+      grid-template-columns: 1.2fr 1fr 1fr;
+    }
+  }
+  .site-footer__brand {
+    font-weight: 800;
+    font-size: var(--step-1);
+    color: var(--text);
+  }
+  .site-footer__tag {
+    margin-top: 6px;
+  }
+  .site-footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .site-footer__links a,
+  .site-footer__contact a {
+    color: var(--text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+  }
+  .site-footer__links a:hover,
+  .site-footer__contact a:hover {
+    color: var(--gold-300);
+    text-decoration: underline;
+  }
+  .site-footer__hours {
+    margin-top: 6px;
+  }
+  .site-footer__bottom {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--stroke);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+</style>

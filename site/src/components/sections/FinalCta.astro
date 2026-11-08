@@ -1,0 +1,94 @@
+---
+import { Picture } from 'astro:assets';
+import { landing } from '../../config/landing';
+import CtaButton from '../ui/CtaButton.astro';
+import guyFly from '../../assets/chars/guy-fly.webp';
+import flora from '../../assets/chars/flora-warrior.webp';
+const f = landing.finalCta;
+---
+
+<section class="section final" aria-labelledby="final-title" data-sticky-hide>
+  <div class="container">
+    <div class="final__card" data-reveal data-parallax>
+      <div class="final__char final__char--guy" aria-hidden="true">
+        <Picture
+          fallbackFormat="webp"
+          src={guyFly}
+          formats={['avif', 'webp']}
+          widths={[200, 400]}
+          sizes="180px"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <div class="final__char final__char--flora" aria-hidden="true">
+        <Picture
+          fallbackFormat="webp"
+          src={flora}
+          formats={['avif', 'webp']}
+          widths={[160, 320]}
+          sizes="140px"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <h2 id="final-title" class="final__title">
+        {f.title}
+      </h2>
+      <p class="final__text">{f.text}</p>
+      <CtaButton href="#pricing" location="final">
+        {f.cta}
+      </CtaButton>
+    </div>
+  </div>
+</section>
+
+<style>
+  .final__card {
+    --mx: 0;
+    --my: 0;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: clamp(48px, 8vw, 96px) clamp(20px, 6vw, 80px);
+    border-radius: 36px;
+    border: 1px solid rgb(255 201 74 / 0.35);
+    background:
+      radial-gradient(60% 80% at 50% 0%, rgb(255 201 74 / 0.22), transparent 60%),
+      radial-gradient(80% 80% at 50% 120%, rgb(91 63 214 / 0.5), transparent 60%), var(--space-850);
+    box-shadow: 0 50px 100px -40px rgb(0 0 0 / 0.9);
+  }
+  .final__title {
+    position: relative;
+    font-size: var(--step-3);
+  }
+  .final__text {
+    position: relative;
+    margin: 14px auto 28px;
+    max-width: 46ch;
+    color: var(--text-muted);
+    font-size: var(--step-1);
+  }
+  .final__char {
+    position: absolute;
+    opacity: 0.9;
+    filter: drop-shadow(0 16px 20px rgb(0 0 0 / 0.6));
+    transform: translate3d(calc(var(--mx) * -18px), calc(var(--my) * -14px), 0);
+  }
+  .final__char :global(img) {
+    width: 100%;
+  }
+  .final__char--guy {
+    width: clamp(90px, 16vw, 180px);
+    inset: auto -2% -4% auto;
+  }
+  .final__char--flora {
+    width: clamp(70px, 12vw, 140px);
+    inset: 4% auto auto 2%;
+  }
+  @media (max-width: 720px) {
+    .final__char {
+      opacity: 0.35;
+    }
+  }
+</style>

@@ -4,3 +4,5 @@ node_modules
 package-lock.json
 docs/old-site-content.md
 SPEC.md
+.lighthouseci
+qa-shots

@@ -1,0 +1,139 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import CtaButton from '../components/ui/CtaButton.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site, whatsappLink } from '../config/site';
+import guyFly from '../assets/chars/guy-fly.webp';
+---
+
+<Base title="תודה על ההזמנה" noindex headerCta={false}>
+  <section class="ty container" aria-labelledby="ty-title">
+    <div class="ty__card card">
+      <div class="ty__hero" aria-hidden="true">
+        <Picture
+          fallbackFormat="webp"
+          src={guyFly}
+          formats={['avif', 'webp']}
+          widths={[220, 440]}
+          sizes="200px"
+          alt=""
+          loading="eager"
+        />
+      </div>
+      <h1 id="ty-title">תודה! ההזמנה התקבלה</h1>
+      <p class="ty__order" data-order hidden>
+        מספר הזמנה: <strong data-order-num></strong>
+      </p>
+      <p class="ty__lead">הגיבורים כבר אורזים את הערכה. הנה מה שקורה עכשיו:</p>
+      <ol class="ty__steps">
+        <li>
+          <Icon name="check" size={20} /> אישור הזמנה וחשבונית נשלחים אליכם למייל.
+        </li>
+        <li>
+          <Icon name="truck" size={20} /> אנחנו אורזים ושולחים, והערכה מגיעה עד הבית תוך עד{' '}
+          {site.shipping.maxBusinessDays} ימי עסקים.
+        </li>
+        <li>
+          <Icon name="sparkle" size={20} /> כשהיא מגיעה: פותחים יחד, קוראים את הסיפור, ומתחילים את
+          ההרפתקה.
+        </li>
+      </ol>
+      <p class="ty__help">
+        שאלה?{' '}
+        <a
+          href={whatsappLink('היי, יש לי שאלה לגבי ההזמנה שלי')}
+          target="_blank"
+          rel="noopener"
+          data-whatsapp="thank-you"
+        >
+          כתבו לנו בוואטסאפ
+        </a>
+      </p>
+      <CtaButton href="/" location="thank-you" variant="ghost" size="m">
+        חזרה לדף הבית
+      </CtaButton>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ty {
+    padding-block: 32px 96px;
+  }
+  .ty__card {
+    max-width: 680px;
+    margin-inline: auto;
+    padding: clamp(28px, 5vw, 48px);
+    border-radius: 32px;
+    text-align: center;
+    border-color: rgb(255 201 74 / 0.35);
+  }
+  .ty__hero {
+    width: 170px;
+    margin: -10px auto 8px;
+    filter: drop-shadow(0 16px 24px rgb(0 0 0 / 0.6));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ty__hero {
+      animation: ty-bob 4s ease-in-out infinite;
+    }
+  }
+  @keyframes ty-bob {
+    50% {
+      transform: translateY(-12px) rotate(3deg);
+    }
+  }
+  .ty__card h1 {
+    font-size: var(--step-3);
+  }
+  .ty__order {
+    margin-top: 8px;
+    color: var(--gold-300);
+    font-size: var(--step-1);
+  }
+  .ty__lead {
+    margin-top: 12px;
+    color: var(--text-muted);
+  }
+  .ty__steps {
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    display: grid;
+    gap: 10px;
+    text-align: start;
+    max-width: 480px;
+  }
+  .ty__steps li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .ty__steps :global(svg) {
+    flex: none;
+    margin-top: 3px;
+    color: var(--teal-300);
+  }
+  .ty__help {
+    margin-bottom: 20px;
+  }
+</style>
+
+<script>
+  // מספר ההזמנה מגיע בכתובת (שלב 2). מוצג כטקסט בלבד.
+  const num = new URLSearchParams(location.search).get('order');
+  if (num && /^\d{1,10}$/.test(num)) {
+    const box = document.querySelector<HTMLElement>('[data-order]');
+    const el = document.querySelector('[data-order-num]');
+    if (box && el) {
+      el.textContent = `#${num}`;
+      box.hidden = false;
+    }
+  }
+  try {
+    localStorage.removeItem('pp-checkout-draft');
+  } catch {
+    /* מתעלמים */
+  }
+</script>

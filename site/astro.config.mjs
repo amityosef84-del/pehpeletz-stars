@@ -10,4 +10,8 @@ export default defineConfig({
     format: 'directory',
   },
   devToolbar: { enabled: false },
+  // בלי סקריפטים inline: כך אפשר CSP קשיח (script-src 'self') בלי hashes
+  vite: {
+    build: { assetsInlineLimit: 0 },
+  },
 });

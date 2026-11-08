@@ -1,0 +1,50 @@
+---
+import { whatsappLink } from '../config/site';
+import Icon from './ui/Icon.astro';
+---
+
+<aside aria-label="שיחה בוואטסאפ">
+  <a class="wa-fab" href={whatsappLink()} target="_blank" rel="noopener" data-whatsapp="fab">
+    <Icon name="whatsapp" size={30} />
+    <span class="visually-hidden">שיחה איתנו בוואטסאפ (נפתח בחלון חדש)</span>
+  </a>
+</aside>
+
+<style>
+  .wa-fab {
+    position: fixed;
+    inset-inline-end: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 60;
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: #1aa34a;
+    box-shadow:
+      0 10px 30px -6px rgb(0 0 0 / 0.6),
+      0 0 0 4px rgb(26 163 74 / 0.25);
+    transition:
+      transform 0.25s var(--ease-spring),
+      bottom 0.35s var(--ease-out);
+  }
+  .wa-fab:hover {
+    color: #fff;
+    transform: scale(1.08);
+  }
+  /* כשה-sticky CTA גלוי במובייל, הכפתור עולה מעליו */
+  :global(.sticky-on) .wa-fab {
+    bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 900px) {
+    :global(.sticky-on) .wa-fab {
+      bottom: 24px;
+    }
+    .wa-fab {
+      bottom: 24px;
+      inset-inline-end: 24px;
+    }
+  }
+</style>

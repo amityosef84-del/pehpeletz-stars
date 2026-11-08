@@ -1,0 +1,87 @@
+---
+import { Picture } from 'astro:assets';
+import { landing } from '../../config/landing';
+import cover from '../../assets/photos/book-cover.webp';
+const s = landing.story;
+---
+
+<section class="section story" aria-labelledby="story-title">
+  <div class="container story__grid">
+    <figure class="story__cover" data-reveal data-tilt>
+      <Picture
+        fallbackFormat="webp"
+        src={cover}
+        formats={['avif', 'webp']}
+        widths={[400, 700, 1000]}
+        sizes="(min-width: 960px) 460px, 90vw"
+        alt="כריכת הספר הכוכבים של פהפלצת: גיא מחזיק מברשת שיניים, ומאחוריו לורד עששת"
+        loading="lazy"
+      />
+    </figure>
+    <div>
+      <p class="eyebrow" data-reveal>
+        {s.eyebrow}
+      </p>
+      <h2 id="story-title" class="section-title" data-reveal>
+        {s.title}
+      </h2>
+      <div class="story__text">
+        {s.paragraphs.map((p, i) => (
+          <p data-reveal style={`--i:${i}`}>
+            {p}
+          </p>
+        ))}
+      </div>
+      <p class="story__sig" data-reveal>
+        {s.signature}
+      </p>
+      <p class="story__credits" data-reveal>
+        {s.credits}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .story__grid {
+    display: grid;
+    gap: 36px;
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .story__grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 56px;
+    }
+  }
+  .story__cover {
+    margin: 0;
+    border-radius: var(--radius-l);
+    overflow: hidden;
+    box-shadow:
+      0 40px 80px -30px rgb(0 0 0 / 0.9),
+      0 0 0 1px var(--stroke-strong),
+      0 0 60px -20px rgb(91 63 214 / 0.8);
+  }
+  .story__cover :global(img) {
+    width: 100%;
+  }
+  .story__text {
+    margin-top: 18px;
+    display: grid;
+    gap: 14px;
+    color: var(--text-muted);
+    font-size: var(--step-0);
+  }
+  .story__sig {
+    margin-top: 20px;
+    font-weight: 800;
+    font-size: var(--step-1);
+    color: var(--gold-300);
+  }
+  .story__credits {
+    margin-top: 6px;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+</style>

@@ -1,0 +1,141 @@
+---
+import { landing } from '../../config/landing';
+import Icon from '../ui/Icon.astro';
+const t = landing.testimonials;
+---
+
+<section class="section reviews" aria-labelledby="reviews-title">
+  <div class="container">
+    <div class="reviews__head">
+      <div>
+        <p class="eyebrow" data-reveal>
+          {t.eyebrow}
+        </p>
+        <h2 id="reviews-title" class="section-title" data-reveal>
+          {t.title}
+        </h2>
+      </div>
+      <div class="reviews__nav">
+        <button type="button" class="reviews__btn" data-dir="prev" aria-controls="reviews-track">
+          <Icon name="arrow" size={20} class="flip" />
+          <span class="visually-hidden">להמלצה הקודמת</span>
+        </button>
+        <button type="button" class="reviews__btn" data-dir="next" aria-controls="reviews-track">
+          <Icon name="arrow" size={20} />
+          <span class="visually-hidden">להמלצה הבאה</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="reviews__viewport">
+    <ul
+      id="reviews-track"
+      class="reviews__track"
+      tabindex="0"
+      aria-label="המלצות של הורים, ניתן לגלול"
+    >
+      {t.items.map((r) => (
+        <li class="review card">
+          <Icon name="quote" size={30} class="review__q" />
+          <blockquote>
+            <p>{r.quote}</p>
+          </blockquote>
+          <p class="review__name">{r.name}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .reviews {
+    overflow: clip;
+  }
+  .reviews__head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .reviews__nav {
+    display: flex;
+    gap: 8px;
+  }
+  .reviews__btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--stroke-strong);
+    background: var(--surface-1);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .reviews__btn:hover {
+    background: var(--surface-2);
+  }
+  .reviews__btn :global(.flip) {
+    transform: scaleX(-1);
+  }
+  .reviews__viewport {
+    margin-top: 28px;
+  }
+  .reviews__track {
+    list-style: none;
+    margin: 0;
+    padding: 8px max(var(--gutter), calc((100vw - var(--container)) / 2)) 24px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(82vw, 340px);
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--container)) / 2));
+    scrollbar-width: thin;
+    scrollbar-color: var(--stroke-strong) transparent;
+    overscroll-behavior-x: contain;
+  }
+  .review {
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 22px;
+    border-radius: var(--radius-l);
+  }
+  .review :global(.review__q) {
+    color: var(--gold-400);
+    opacity: 0.85;
+  }
+  .review blockquote {
+    margin: 0;
+    flex: 1;
+  }
+  .review blockquote p {
+    font-size: var(--step-0);
+    line-height: 1.65;
+  }
+  .review__name {
+    font-weight: 800;
+    color: var(--teal-300);
+  }
+</style>
+
+<script>
+  const track = document.getElementById('reviews-track');
+  document.querySelectorAll<HTMLButtonElement>('.reviews__btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!track) return;
+      const card = track.querySelector('li');
+      const step = (card?.getBoundingClientRect().width ?? 320) + 16;
+      // RTL: "הבא" נמצא משמאל, כלומר scrollLeft שלילי
+      const dir = btn.dataset.dir === 'next' ? -1 : 1;
+      track.scrollBy({
+        left: dir * step,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      });
+    });
+  });
+</script>

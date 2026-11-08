@@ -1,0 +1,68 @@
+---
+/** אייקונים כ-SVG inline (בלי בקשות רשת). דקורטיביים כברירת מחדל. */
+interface Props {
+  name:
+    | 'star'
+    | 'sparkle'
+    | 'shield'
+    | 'truck'
+    | 'lock'
+    | 'whatsapp'
+    | 'check'
+    | 'chevron'
+    | 'gift'
+    | 'book'
+    | 'chart'
+    | 'sticker'
+    | 'brush'
+    | 'palette'
+    | 'quote'
+    | 'arrow';
+  size?: number;
+  label?: string;
+  class?: string;
+}
+const { name, size = 22, label, class: className } = Astro.props;
+const paths: Record<Props['name'], string> = {
+  star: '<path fill="currentColor" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.5L12 17.3l-5.9 3.2 1.3-6.5-4.9-4.6 6.6-.8z"/>',
+  sparkle:
+    '<path fill="currentColor" d="M12 1.5l2.2 7.3L21.5 12l-7.3 2.2L12 21.5l-2.2-7.3L2.5 12l7.3-3.2z"/>',
+  shield:
+    '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 2.8l7.5 3v5.6c0 4.6-3.1 8.4-7.5 9.8-4.4-1.4-7.5-5.2-7.5-9.8V5.8z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.4 2.4 4.6-4.8"/>',
+  truck:
+    '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M2.5 6.5h11v9h-11zM13.5 9.5h4.2l3.3 3.4v2.6h-7.5z"/><circle cx="6.5" cy="17.5" r="2" fill="currentColor"/><circle cx="17" cy="17.5" r="2" fill="currentColor"/>',
+  lock: '<rect x="4.5" y="10.5" width="15" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M8 10.5V7.8a4 4 0 018 0v2.7"/>',
+  whatsapp:
+    '<path fill="currentColor" d="M12 2.2a9.7 9.7 0 00-8.4 14.6L2.3 21.7l5-1.3A9.7 9.7 0 1012 2.2zm0 17.7a8 8 0 01-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1112 19.9zm4.4-6c-.2-.1-1.4-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.6 6.6 0 01-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.7-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.2 5.2 5.2 0 001.1 2.8 11.9 11.9 0 004.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.4-.6 1.6-1.2s.2-1.1.1-1.2-.2-.2-.5-.3z"/>',
+  check:
+    '<path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/>',
+  chevron:
+    '<path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M7 9.5l5 5 5-5"/>',
+  gift: '<rect x="3.5" y="8.5" width="17" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M5 12.5v8h14v-8M12 8.5v12M12 8.5c-1.5-3.5-5.5-4-5.5-1.5S12 8.5 12 8.5zm0 0c1.5-3.5 5.5-4 5.5-1.5S12 8.5 12 8.5z"/>',
+  book: '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 6.5c-2-1.6-5-2-8.5-1.5v13c3.5-.5 6.5-.1 8.5 1.5 2-1.6 5-2 8.5-1.5V5c-3.5-.5-6.5-.1-8.5 1.5zm0 0v13"/>',
+  chart:
+    '<rect x="3" y="4.5" width="18" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M3 9.5h18M8 9.5v10M13 9.5v10"/><path fill="currentColor" d="M17.6 12.2l.6 1.3 1.4.2-1 1 .2 1.4-1.2-.7-1.3.7.3-1.4-1-1 1.4-.2z"/>',
+  sticker:
+    '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M20.5 12.5a8.5 8.5 0 11-9-9h9v9zM20.5 12.5h-5a3.5 3.5 0 01-3.5-3.5V3.5"/>',
+  brush:
+    '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 20L14 10"/><rect x="13" y="3" width="8" height="5.5" rx="1.5" transform="rotate(45 17 5.75)" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M15.6 4.2l-1.4 1.4M17.6 6.2l-1.4 1.4M19.6 8.2l-1.4 1.4"/>',
+  palette:
+    '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 3.5a8.5 8.5 0 100 17c1.3 0 1.9-.9 1.5-2-.5-1.4.3-2.5 1.8-2.5h1.7a3.5 3.5 0 003.5-3.5c0-5-3.8-9-8.5-9z"/><circle cx="7.8" cy="11.5" r="1.3" fill="currentColor"/><circle cx="10" cy="7.6" r="1.3" fill="currentColor"/><circle cx="14.6" cy="7.6" r="1.3" fill="currentColor"/>',
+  quote:
+    '<path fill="currentColor" d="M10 6.5C6.6 7.6 4.5 10.4 4.5 14v3.5h6v-6H7.6c.3-1.7 1.4-3 3.1-3.6zm9 0c-3.4 1.1-5.5 3.9-5.5 7.5v3.5h6v-6h-2.9c.3-1.7 1.4-3 3.1-3.6z"/>',
+  arrow:
+    '<path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6-6l-6 6 6 6"/>',
+};
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={paths[name]}
+/>

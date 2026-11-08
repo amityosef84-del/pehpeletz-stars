@@ -1,0 +1,226 @@
+---
+import { Picture } from 'astro:assets';
+import { landing } from '../../config/landing';
+import villain from '../../assets/chars/villain.webp';
+import germsGreen from '../../assets/chars/germs-green.webp';
+import germsPlaque from '../../assets/chars/germs-plaque.webp';
+
+const p = landing.pain;
+---
+
+<section class="section pain" data-scene aria-labelledby="pain-title">
+  <div class="pain__fog" aria-hidden="true"></div>
+  <div class="container pain__grid">
+    <div class="pain__copy">
+      <p class="eyebrow pain__eyebrow" data-reveal>
+        {p.eyebrow}
+      </p>
+      <h2 id="pain-title" class="section-title" data-reveal>
+        {p.title}
+      </h2>
+      <ul class="pain__list">
+        {p.points.map((pt, i) => (
+          <li class="pain__item card" data-reveal style={`--i:${i + 1}`}>
+            <span class="pain__x" aria-hidden="true">
+              ✕
+            </span>
+            <div>
+              <h3>{pt.title}</h3>
+              <p>{pt.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="pain__stage" aria-hidden="true">
+      <div class="pain__villain">
+        <Picture
+          fallbackFormat="webp"
+          src={villain}
+          formats={['avif', 'webp']}
+          widths={[320, 520, 760]}
+          sizes="(min-width: 960px) 460px, 80vw"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <div class="pain__germs pain__germs--a">
+        <Picture
+          fallbackFormat="webp"
+          src={germsGreen}
+          formats={['avif', 'webp']}
+          widths={[180, 360]}
+          sizes="170px"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <div class="pain__germs pain__germs--b">
+        <Picture
+          fallbackFormat="webp"
+          src={germsPlaque}
+          formats={['avif', 'webp']}
+          widths={[160, 320]}
+          sizes="150px"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="container pain__outro">
+    <p class="pain__villain-line" data-reveal>
+      {p.villainLine}
+    </p>
+    <p class="pain__reframe" data-reveal>
+      <span class="shine-text">{p.reframe}</span>
+    </p>
+  </div>
+</section>
+
+<style>
+  .pain {
+    --p: 0;
+    overflow: clip;
+  }
+  .pain__fog {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(
+        45% 40% at 20% 40%,
+        rgb(61 220 108 / calc(0.05 + var(--p) * 0.14)),
+        transparent 70%
+      ),
+      radial-gradient(
+        60% 50% at 80% 70%,
+        rgb(30 120 60 / calc(0.04 + var(--p) * 0.1)),
+        transparent 70%
+      );
+  }
+  .pain__grid {
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .pain__grid {
+      grid-template-columns: 1.1fr 1fr;
+      gap: 48px;
+    }
+  }
+  .pain__eyebrow {
+    color: #8ff0a8;
+  }
+  .pain__list {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+    display: grid;
+    gap: 14px;
+  }
+  .pain__item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 18px 20px;
+    border-radius: var(--radius-m);
+    border-color: rgb(61 220 108 / 0.18);
+  }
+  .pain__item h3 {
+    font-size: var(--step-1);
+  }
+  .pain__item p {
+    margin-top: 4px;
+    color: var(--text-muted);
+  }
+  .pain__x {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgb(255 143 143 / 0.12);
+    color: var(--danger);
+    font-weight: 800;
+  }
+
+  .pain__stage {
+    position: relative;
+    aspect-ratio: 1;
+    width: min(100%, 520px);
+    margin-inline: auto;
+  }
+  .pain__villain {
+    position: absolute;
+    inset: 4% 8% 4% 8%;
+    filter: drop-shadow(0 0 calc(10px + var(--p) * 40px) var(--toxic-glow));
+    transform: translateY(calc((1 - var(--p)) * 60px)) scale(calc(0.86 + var(--p) * 0.18));
+    opacity: calc(0.35 + var(--p) * 1.2);
+  }
+  .pain__villain :global(img),
+  .pain__germs :global(img) {
+    width: 100%;
+  }
+  .pain__germs {
+    position: absolute;
+    filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.6));
+  }
+  .pain__germs--a {
+    width: 32%;
+    inset: auto auto -2% -4%;
+    transform: translate(calc(var(--p) * 30px), calc((1 - var(--p)) * 80px))
+      rotate(calc(var(--p) * 14deg));
+  }
+  .pain__germs--b {
+    width: 28%;
+    inset: 0 -4% auto auto;
+    transform: translate(calc(var(--p) * -24px), calc((1 - var(--p)) * -60px))
+      rotate(calc(var(--p) * -10deg));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pain__germs :global(picture) {
+      display: block;
+      animation: jitter 3.2s ease-in-out infinite;
+    }
+    .pain__germs--b :global(picture) {
+      animation-delay: -1.6s;
+    }
+  }
+  @keyframes jitter {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(0);
+    }
+    25% {
+      transform: translate(3px, -6px) rotate(-3deg);
+    }
+    50% {
+      transform: translate(-4px, 2px) rotate(2deg);
+    }
+    75% {
+      transform: translate(2px, 5px) rotate(-1deg);
+    }
+  }
+
+  .pain__outro {
+    margin-top: clamp(40px, 6vw, 72px);
+    text-align: center;
+  }
+  .pain__villain-line {
+    color: #8ff0a8;
+    font-size: var(--step-1);
+    font-weight: 600;
+  }
+  .pain__reframe {
+    margin-top: 14px;
+    font-size: var(--step-3);
+    font-weight: 800;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+</style>

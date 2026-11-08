@@ -1,49 +1,71 @@
 ---
-// שלב 0: עמוד placeholder. דף הנחיתה המלא נבנה בשלב 1.
-const title = 'הכוכבים של פהפלצת';
+import Base from '../layouts/Base.astro';
+import TopBar from '../components/sections/TopBar.astro';
+import ScrollProgress from '../components/ScrollProgress.astro';
+import Hero from '../components/sections/Hero.astro';
+import Pain from '../components/sections/Pain.astro';
+import Solution from '../components/sections/Solution.astro';
+import Kit from '../components/sections/Kit.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import Pricing from '../components/sections/Pricing.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import Guarantee from '../components/sections/Guarantee.astro';
+import Story from '../components/sections/Story.astro';
+import Faq from '../components/sections/Faq.astro';
+import FinalCta from '../components/sections/FinalCta.astro';
+import StickyCta from '../components/StickyCta.astro';
+import { landing } from '../config/landing';
+import { site } from '../config/site';
+import { packages, quote } from '../config/packages';
+
+const origin = Astro.site?.origin ?? '';
+const prices = packages.map((p) => quote(p.slug).total);
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'ערכת הכוכבים של פהפלצת',
+    description: site.description,
+    brand: { '@type': 'Brand', name: site.brand },
+    image: `${origin}/og.jpg`,
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'ILS',
+      lowPrice: Math.min(...prices),
+      highPrice: Math.max(...prices),
+      offerCount: packages.length,
+      availability: 'https://schema.org/InStock',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: landing.faq.items.map((i) => ({
+      '@type': 'Question',
+      name: i.q,
+      acceptedAnswer: { '@type': 'Answer', text: i.a },
+    })),
+  },
+];
 ---
 
-<!doctype html>
-<html lang="he" dir="rtl">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <title>{title}</title>
-    <style>
-      :root {
-        color-scheme: dark;
-      }
-      body {
-        margin: 0;
-        min-height: 100dvh;
-        display: grid;
-        place-items: center;
-        background: radial-gradient(ellipse at top, #0b3a44 0%, #031016 70%);
-        color: #f2fbff;
-        font-family:
-          system-ui,
-          -apple-system,
-          'Segoe UI',
-          Arial,
-          sans-serif;
-        text-align: center;
-        padding: 1.5rem;
-      }
-      h1 {
-        font-size: clamp(1.75rem, 6vw, 3rem);
-        margin: 0 0 0.5rem;
-      }
-      p {
-        margin: 0;
-        opacity: 0.85;
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <h1>{title}</h1>
-      <p>האתר החדש בבנייה. נתראה בקרוב בין הכוכבים.</p>
-    </main>
-  </body>
-</html>
+<Base jsonLd={jsonLd}>
+  <Fragment slot="before-header">
+    <ScrollProgress />
+    <TopBar />
+  </Fragment>
+
+  <Hero />
+  <Pain />
+  <Solution />
+  <Kit />
+  <HowItWorks />
+  <Pricing />
+  <Testimonials />
+  <Guarantee />
+  <Story />
+  <Faq />
+  <FinalCta />
+
+  <StickyCta slot="after-footer" />
+</Base>

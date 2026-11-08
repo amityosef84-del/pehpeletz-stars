@@ -1,0 +1,203 @@
+---
+import { Picture } from 'astro:assets';
+import { landing } from '../../config/landing';
+import Icon from '../ui/Icon.astro';
+import book from '../../assets/photos/kit-book.jpg';
+import chart from '../../assets/photos/kit-chart.jpg';
+import stickers from '../../assets/photos/kit-stickers.jpg';
+import brush from '../../assets/photos/kit-brush.jpg';
+import coloring from '../../assets/photos/kit-coloring.jpg';
+import all from '../../assets/photos/kit-all.jpg';
+
+const k = landing.kit;
+const media = {
+  book: { img: book, icon: 'book', alt: 'ספר ההרפתקאות פתוח על כפולת עמודים מאוירת' },
+  chart: { img: chart, icon: 'chart', alt: 'לוח הצחצוח השבועי עם הגיבורים ומברשת כתומה' },
+  stickers: { img: stickers, icon: 'sticker', alt: 'דף מדבקות עם גיא, דנטוריון, פלאורה והחיידקים' },
+  brush: { img: brush, icon: 'brush', alt: 'מברשת שיניים כתומה עם מדבקת דנטוריון על הידית' },
+  coloring: {
+    img: coloring,
+    icon: 'palette',
+    alt: 'חוברת הצביעה פתוחה עם פלאורה ודנטוריון לצביעה',
+  },
+} as const;
+---
+
+<section id="kit" class="section kit" aria-labelledby="kit-title">
+  <div class="container">
+    <div class="center">
+      <p class="eyebrow" data-reveal>
+        {k.eyebrow}
+      </p>
+      <h2 id="kit-title" class="section-title" data-reveal>
+        {k.title}
+      </h2>
+      <p class="section-lead" data-reveal>
+        {k.lead}
+      </p>
+    </div>
+
+    <div class="kit__grid">
+      <figure class="kit__all card" data-reveal data-tilt>
+        <Picture
+          fallbackFormat="webp"
+          src={all}
+          formats={['avif', 'webp']}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 960px) 740px, 92vw"
+          alt="כל מה שיש בערכה: לוח צחצוח, חוברת צביעה, דף מדבקות ומברשת"
+          loading="lazy"
+        />
+        <figcaption>
+          <Icon name="gift" size={20} />
+          הכל בקופסה אחת, מוכן למתנה
+        </figcaption>
+      </figure>
+
+      {k.items.map((item, i) => {
+        const m = media[item.key];
+        return (
+          <article class="kit__item card" data-reveal data-tilt style={`--i:${i}`}>
+            <div class="kit__photo" class:list={[{ 'kit__photo--contain': item.key === 'brush' }]}>
+              <Picture
+                fallbackFormat="webp"
+                src={m.img}
+                formats={['avif', 'webp']}
+                widths={[360, 640]}
+                sizes="(min-width: 960px) 360px, (min-width: 600px) 45vw, 92vw"
+                alt={m.alt}
+                loading="lazy"
+              />
+              <span class="kit__glare" aria-hidden="true" />
+            </div>
+            <div class="kit__body">
+              <span class="kit__icon">
+                <Icon name={m.icon} size={22} />
+              </span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .kit__grid {
+    margin-top: 40px;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 600px) {
+    .kit__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .kit__all {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 960px) {
+    .kit__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .kit__all {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+  }
+  .kit__all {
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .kit__all :global(img) {
+    border-radius: calc(var(--radius-l) - 8px);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .kit__all :global(picture) {
+    flex: 1;
+  }
+  .kit__all figcaption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 8px 4px;
+    font-weight: 700;
+    color: var(--gold-300);
+  }
+  .kit__item {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .kit__photo {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #e9e9ea;
+  }
+  .kit__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out);
+  }
+  .kit__photo--contain {
+    background: radial-gradient(circle, #ffffff, #dedfe2);
+  }
+  .kit__photo--contain :global(img) {
+    object-fit: contain;
+    padding: 8%;
+  }
+  .kit__item:hover .kit__photo :global(img) {
+    transform: scale(1.06);
+  }
+  .kit__glare {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--gx, 50%) var(--gy, 0%),
+      rgb(255 255 255 / 0.35),
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    mix-blend-mode: soft-light;
+  }
+  .kit__item:hover .kit__glare {
+    opacity: 1;
+  }
+  .kit__body {
+    position: relative;
+    padding: 30px 18px 20px;
+  }
+  .kit__icon {
+    position: absolute;
+    top: -22px;
+    inset-inline-start: 16px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    color: var(--text-on-gold);
+    background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
+    box-shadow: var(--shadow-glow-gold);
+  }
+  .kit__body h3 {
+    font-size: var(--step-1);
+  }
+  .kit__body p {
+    margin-top: 6px;
+    color: var(--text-muted);
+    font-size: var(--step--1);
+    line-height: 1.55;
+  }
+</style>

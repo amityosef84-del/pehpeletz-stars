@@ -3,14 +3,14 @@
 דף נחיתה ממוקד המרה, תשלום בסאמיט ומערכת ניהול לערכת הצחצוח "הכוכבים של פהפלצת".
 האפיון המלא: [SPEC.md](SPEC.md). התוכן מהאתר הישן: [docs/old-site-content.md](docs/old-site-content.md).
 
-| שלב | מה                                        | סטטוס       |
-| --- | ----------------------------------------- | ----------- |
-| 0   | הקמה: repo, Netlify, Supabase, CI         | ✅ קוד מוכן |
-| 1   | דף נחיתה, מדיניות, נגישות, ביצועים        | ⏳          |
-| 2   | רכישה: create-order, סאמיט, חשבונית, מייל | ⏳          |
-| 3   | מעקב, פיקסלים, CAPI, דשבורד               | ⏳          |
-| 4   | Admin                                     | ⏳          |
-| 5   | ליטוש והשקה                               | ⏳          |
+| שלב | מה                                        | סטטוס                             |
+| --- | ----------------------------------------- | --------------------------------- |
+| 0   | הקמה: repo, Netlify, Supabase, CI         | ✅ (Supabase ממתין לפתיחת פרויקט) |
+| 1   | דף נחיתה, מדיניות, נגישות, ביצועים        | ✅ ממתין לאישור                   |
+| 2   | רכישה: create-order, סאמיט, חשבונית, מייל | ⏳                                |
+| 3   | מעקב, פיקסלים, CAPI, דשבורד               | ⏳                                |
+| 4   | Admin                                     | ⏳                                |
+| 5   | ליטוש והשקה                               | ⏳                                |
 
 ## מבנה
 
@@ -23,8 +23,25 @@ netlify/lib/          עזרים לפונקציות (env, Supabase service clien
 netlify/test/         בדיקות לפונקציות (מחוץ לתיקיית functions בכוונה)
 supabase/migrations/  סכמת ה-DB
 supabase/tests/       shim של Supabase + בדיקות RLS ל-CI
-scripts/              סקריפטים לפיתוח ול-CI
+scripts/qa/           בדיקות QA: נגישות (axe), זרימת תשלום, צילומי מסך
+scripts/assets/       יצירת תמונת השיתוף (OG)
 ```
+
+### דף הנחיתה (`site/`)
+
+| קובץ                            | מה יש בו                                                                                                                |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `site/src/config/landing.ts`    | **כל הטקסטים** של הדף: כותרות, כאב, פתרון, מה בערכה, צעדים, המלצות, שאלות ותשובות. לשינוי טקסט או ל-A/B עורכים כאן בלבד |
+| `site/src/config/packages.ts`   | החבילות, הסדר, תגיות ("הכי פופולרי") וכלל המשלוח. משקף את ה-seed ב-DB                                                   |
+| `site/src/config/site.ts`       | וואטסאפ, שעות מענה, פרטי עוסק (ממתינים להשלמה), דגלים                                                                   |
+| `site/src/components/sections/` | מקטע לכל חלק בדף, לפי הסדר בסעיף 6 באפיון                                                                               |
+| `site/src/scripts/fx.ts`        | אפקטים: חשיפה בגלילה, סצנות גלילה, parallax, הטיית כרטיסים, פיצוץ כוכבים                                                |
+| `site/src/scripts/starfield.ts` | שדה הכוכבים ב-canvas + קפיצת ה-warp בכניסה                                                                              |
+| `site/src/scripts/checkout.ts`  | ולידציה, סיכום, טיוטה מקומית ושליחה ל-`/api/create-order`                                                               |
+| `site/src/pages/*.astro`        | דף הבית, תשלום, תודה, מדיניות, נגישות, צור קשר, 404                                                                     |
+| `site/src/assets/`              | דמויות (מתוך קובצי ה-PDF של המדבקות והלוח), תמונות מוצר, לוגו                                                           |
+
+כל האנימציות כבויות כשבמכשיר מוגדרת "הפחתת תנועה". אין סקריפטים inline (בשביל CSP קשיח).
 
 `public/` מהאפיון יושב ב-`site/public`, כמקובל ב-Astro.
 
@@ -40,15 +57,20 @@ npm install
 npm run dev
 ```
 
-| פקודה                  | מה עושה                                                       |
-| ---------------------- | ------------------------------------------------------------- |
-| `npm run dev`          | דף הנחיתה ב-localhost:4321                                    |
-| `npm run dev -w admin` | האדמין ב-localhost:5174/admin                                 |
-| `npm run build`        | build מלא (אתר + אדמין) ל-`site/dist`                         |
-| `npm test`             | בדיקות Vitest                                                 |
-| `npm run lint`         | ESLint                                                        |
-| `npm run typecheck`    | TypeScript + astro check                                      |
-| `npm run db:validate`  | מריץ migrations + בדיקות RLS על Postgres ריק (`DATABASE_URL`) |
+| פקודה                   | מה עושה                                                          |
+| ----------------------- | ---------------------------------------------------------------- |
+| `npm run dev`           | דף הנחיתה ב-localhost:4321                                       |
+| `npm run dev -w admin`  | האדמין ב-localhost:5174/admin                                    |
+| `npm run build`         | build מלא (אתר + אדמין) ל-`site/dist`                            |
+| `npm test`              | בדיקות Vitest                                                    |
+| `npm run lint`          | ESLint                                                           |
+| `npm run typecheck`     | TypeScript + astro check                                         |
+| `npm run db:validate`   | מריץ migrations + בדיקות RLS על Postgres ריק (`DATABASE_URL`)    |
+| `npm run qa:a11y`       | axe (WCAG 2.1 AA) על כל העמודים, מובייל ודסקטופ. דורש שרת ב-4321 |
+| `npm run qa:checkout`   | בדיקת זרימה מלאה לעמוד התשלום                                    |
+| `npm run qa:lighthouse` | Lighthouse CI על ה-build (סף: ביצועים 85, נגישות 95)             |
+
+לבדיקות ה-QA צריך שרת: `npm run build && (cd site && npx astro preview)`.
 
 ## פריסה ל-Netlify
 
@@ -57,6 +79,11 @@ npm run dev
 2. Site configuration → Environment variables: להגדיר את המשתנים מ-[.env.example](.env.example).
    **אף סוד לא נכנס לקוד או לצ'אט.**
 3. אחרי פריסה: `https://<site>/api/health` אמור להחזיר `{"ok": true, "db": "ok", "activeProducts": 4}`.
+4. דגלים: `PUBLIC_INDEXABLE=true` רק בהשקה (עד אז כל העמודים `noindex`). `PUBLIC_CHECKOUT_ENABLED=true`
+   אחרי ש-`create-order` עולה (שלב 2). עד אז כפתור התשלום פותח וואטסאפ עם פרטי ההזמנה.
+
+האתר מחובר ל-Netlify בשם `pehpeletz-stars` (https://pehpeletz-stars.netlify.app). כל push ל-`main` נפרס
+ל-production, ו-push לענף העבודה נפרס ככתובת preview.
 
 ## Supabase
 

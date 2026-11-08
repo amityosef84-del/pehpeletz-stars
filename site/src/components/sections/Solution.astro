@@ -1,0 +1,265 @@
+---
+import { Picture } from 'astro:assets';
+import { landing } from '../../config/landing';
+import CtaButton from '../ui/CtaButton.astro';
+import guy from '../../assets/chars/guy.webp';
+import robot from '../../assets/chars/robot-fly.webp';
+import flora from '../../assets/chars/flora.webp';
+import villain from '../../assets/chars/villain.webp';
+import germs from '../../assets/chars/germs-green.webp';
+
+const s = landing.solution;
+const avatars = [guy, robot, flora, villain];
+---
+
+<section class="section solution" data-scene aria-labelledby="solution-title">
+  <div class="container">
+    <div class="center solution__head">
+      <p class="eyebrow" data-reveal>
+        {s.eyebrow}
+      </p>
+      <h2 id="solution-title" class="section-title" data-reveal>
+        {s.title}
+      </h2>
+      <p class="section-lead" data-reveal>
+        {s.lead}
+      </p>
+    </div>
+
+    <div class="battle" aria-hidden="true">
+      <div class="battle__beam"></div>
+      <div class="battle__germs">
+        <Picture
+          fallbackFormat="webp"
+          src={germs}
+          formats={['avif', 'webp']}
+          widths={[160, 320]}
+          sizes="140px"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <div class="battle__hero battle__hero--robot">
+        <Picture
+          fallbackFormat="webp"
+          src={robot}
+          formats={['avif', 'webp']}
+          widths={[200, 400]}
+          sizes="200px"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <div class="battle__hero battle__hero--guy">
+        <Picture
+          fallbackFormat="webp"
+          src={guy}
+          formats={['avif', 'webp']}
+          widths={[220, 440]}
+          sizes="230px"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <div class="battle__hero battle__hero--flora">
+        <Picture
+          fallbackFormat="webp"
+          src={flora}
+          formats={['avif', 'webp']}
+          widths={[180, 360]}
+          sizes="180px"
+          alt=""
+          loading="lazy"
+        />
+      </div>
+      <div class="battle__sparkles"></div>
+    </div>
+
+    <ul class="roster">
+      {s.heroes.map((h, i) => (
+        <li
+          class="roster__item card"
+          class:list={[{ 'roster__item--villain': i === 3 }]}
+          data-reveal
+          style={`--i:${i}`}
+        >
+          <span class="roster__avatar">
+            <Picture
+              fallbackFormat="webp"
+              src={avatars[i]!}
+              formats={['avif', 'webp']}
+              widths={[96, 192]}
+              sizes="64px"
+              alt=""
+              loading="lazy"
+            />
+          </span>
+          <span>
+            <strong>{h.name}</strong>
+            <span class="roster__role">{h.role}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="center solution__cta" data-reveal>
+      <CtaButton href="#pricing" location="solution">
+        {s.cta}
+      </CtaButton>
+    </div>
+  </div>
+</section>
+
+<style>
+  .solution {
+    --p: 0;
+    overflow: clip;
+  }
+  .solution__head {
+    max-width: 760px;
+  }
+
+  /* ---------- סצנת הקרב: ככל שגוללים, הקרן מגרשת את החיידקים ---------- */
+  .battle {
+    --win: clamp(0, (var(--p) - 0.25) * 2.4, 1);
+    position: relative;
+    height: clamp(300px, 52vw, 460px);
+    margin-top: 36px;
+  }
+  .battle__beam {
+    position: absolute;
+    inset: 10% -10% 30% -10%;
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      rgb(255 224 138 / 0) 30%,
+      rgb(255 224 138 / 0.55) 46%,
+      #fff 50%,
+      rgb(138 245 234 / 0.55) 54%,
+      rgb(138 245 234 / 0) 70%,
+      transparent 100%
+    );
+    filter: blur(6px);
+    transform: translateX(calc((0.5 - var(--win)) * 140%)) skewX(-18deg);
+    opacity: calc(var(--win) * (1.6 - var(--win)));
+    mix-blend-mode: screen;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .battle__beam,
+    .battle__germs {
+      display: none;
+    }
+  }
+  .battle__hero {
+    position: absolute;
+    bottom: 0;
+    filter: drop-shadow(0 20px 26px rgb(0 0 0 / 0.6))
+      drop-shadow(0 0 calc(var(--win) * 24px) rgb(255 224 138 / 0.5));
+  }
+  .battle__hero :global(img),
+  .battle__germs :global(img) {
+    width: 100%;
+  }
+  .battle__hero--guy {
+    width: clamp(150px, 26vw, 230px);
+    inset-inline-start: 50%;
+    translate: 50% 0;
+    transform: translateY(calc((1 - var(--p)) * 60px));
+  }
+  .battle__hero--robot {
+    width: clamp(120px, 22vw, 200px);
+    inset-inline-start: 6%;
+    bottom: 18%;
+    transform: translate(calc((1 - var(--p)) * 80px), calc((1 - var(--p)) * -40px)) rotate(-6deg);
+  }
+  .battle__hero--flora {
+    width: clamp(110px, 18vw, 170px);
+    inset-inline-end: 8%;
+    bottom: 12%;
+    transform: translate(calc((1 - var(--p)) * -80px), calc((1 - var(--p)) * -30px));
+  }
+  .battle__germs {
+    position: absolute;
+    width: clamp(90px, 14vw, 140px);
+    top: 0;
+    inset-inline-end: 30%;
+    opacity: calc(1 - var(--win) * 1.1);
+    transform: translate(calc(var(--win) * -120px), calc(var(--win) * -80px))
+      scale(calc(1 - var(--win) * 0.7)) rotate(calc(var(--win) * -40deg));
+    filter: saturate(calc(1 - var(--win))) drop-shadow(0 0 12px var(--toxic-glow));
+  }
+  .battle__sparkles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--win);
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+      radial-gradient(2px 2px at 40% 70%, var(--gold-300), transparent),
+      radial-gradient(3px 3px at 65% 25%, #fff, transparent),
+      radial-gradient(2px 2px at 80% 60%, var(--teal-300), transparent),
+      radial-gradient(2px 2px at 55% 45%, var(--gold-300), transparent),
+      radial-gradient(3px 3px at 30% 55%, var(--teal-300), transparent);
+  }
+
+  /* ---------- הדמויות ---------- */
+  .roster {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  @media (min-width: 900px) {
+    .roster {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .roster__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: var(--radius-m);
+  }
+  @media (max-width: 559px) {
+    .roster__item {
+      flex-direction: column;
+      text-align: center;
+      gap: 8px;
+      padding: 14px 10px;
+    }
+  }
+  .roster__item strong {
+    display: block;
+    font-size: var(--step-0);
+  }
+  .roster__role {
+    display: block;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    line-height: 1.35;
+  }
+  .roster__avatar {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 30%, var(--space-700), var(--space-850));
+    border: 1px solid var(--stroke-strong);
+  }
+  .roster__avatar :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 12%;
+  }
+  .roster__item--villain {
+    border-color: rgb(61 220 108 / 0.3);
+  }
+  .solution__cta {
+    margin-top: 32px;
+  }
+</style>

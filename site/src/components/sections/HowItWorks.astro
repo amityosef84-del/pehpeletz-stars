@@ -1,0 +1,152 @@
+---
+import { landing } from '../../config/landing';
+const h = landing.how;
+const planets = ['#ffc94a', '#8af5ea', '#b7a8ff', '#ff9a6b'];
+---
+
+<section class="section how" data-scene aria-labelledby="how-title">
+  <div class="container">
+    <div class="center">
+      <p class="eyebrow" data-reveal>
+        {h.eyebrow}
+      </p>
+      <h2 id="how-title" class="section-title" data-reveal>
+        {h.title}
+      </h2>
+    </div>
+
+    <div class="how__wrap">
+      <span class="how__track" aria-hidden="true">
+        <span class="how__fill"></span>
+      </span>
+      <ol class="how__steps">
+        {h.steps.map((s, i) => (
+          <li class="how__step" data-reveal style={`--i:${i}; --c:${planets[i]}`}>
+            <span class="how__planet" aria-hidden="true">
+              <span>{i + 1}</span>
+            </span>
+            <div class="how__body card">
+              <p class="how__num">צעד {i + 1}</p>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how {
+    --p: 0;
+  }
+  .how__wrap {
+    position: relative;
+    margin-top: 44px;
+  }
+  .how__steps {
+    position: relative;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 22px;
+  }
+  /* מסלול שמתמלא עם הגלילה */
+  .how__track {
+    position: absolute;
+    inset-block: 28px 28px;
+    inset-inline-start: 27px;
+    width: 3px;
+    border-radius: 3px;
+    background: var(--stroke);
+    overflow: hidden;
+  }
+  .how__fill {
+    display: block;
+    width: 100%;
+    height: calc(clamp(0, (var(--p) - 0.2) * 1.8, 1) * 100%);
+    background: linear-gradient(180deg, var(--gold-300), var(--teal-400), var(--violet-300));
+    box-shadow: 0 0 12px var(--gold-400);
+  }
+  .how__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .how__planet {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: var(--step-1);
+    color: var(--space-950);
+    background: radial-gradient(
+      circle at 35% 30%,
+      #fff,
+      var(--c) 45%,
+      color-mix(in srgb, var(--c) 60%, #000)
+    );
+    box-shadow:
+      0 0 0 6px var(--space-900),
+      0 0 26px color-mix(in srgb, var(--c) 70%, transparent);
+  }
+  .how__planet::after {
+    content: '';
+    position: absolute;
+    inset: -8px -14px;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, var(--c) 55%, transparent);
+    transform: rotate(-20deg) scaleY(0.35);
+  }
+  .how__body {
+    padding: 18px 20px;
+    border-radius: var(--radius-m);
+  }
+  .how__num {
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--c);
+  }
+  .how__body h3 {
+    margin-top: 2px;
+    font-size: var(--step-1);
+  }
+  .how__body p:last-child {
+    margin-top: 6px;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 960px) {
+    .how__steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
+    .how__track {
+      inset-block: 27px auto;
+      inset-inline: 12.5% 12.5%;
+      width: auto;
+      height: 3px;
+    }
+    .how__fill {
+      height: 100%;
+      width: calc(clamp(0, (var(--p) - 0.2) * 1.8, 1) * 100%);
+      background: linear-gradient(270deg, var(--gold-300), var(--teal-400), var(--violet-300));
+    }
+    .how__step {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+    }
+    .how__body {
+      width: 100%;
+    }
+  }
+</style>

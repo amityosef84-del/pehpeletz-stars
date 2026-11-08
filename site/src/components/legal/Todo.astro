@@ -1,0 +1,20 @@
+---
+/** מקום שממתין להשלמה ע"י בעל העסק או עו"ד. מודגש כדי שלא יפורסם בטעות. */
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<mark class="todo">[להשלמה: {label}]</mark>
+
+<style>
+  .todo {
+    background: rgb(255 201 74 / 0.22);
+    color: var(--gold-300);
+    border: 1px dashed var(--gold-400);
+    border-radius: 6px;
+    padding: 0 6px;
+    font-weight: 700;
+  }
+</style>

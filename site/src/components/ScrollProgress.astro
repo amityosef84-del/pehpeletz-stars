@@ -1,0 +1,44 @@
+---
+// פס התקדמות בראש העמוד: מברשת שמצחצחת את הדף בזמן הגלילה.
+---
+
+<div class="brush-progress" aria-hidden="true">
+  <div class="brush-progress__foam"></div>
+  <svg class="brush-progress__brush" viewBox="0 0 64 20" width="40" height="13">
+    <rect x="0" y="7" width="40" height="6" rx="3" fill="#ff7a45"></rect>
+    <rect x="38" y="5.5" width="22" height="9" rx="3" fill="#fff"></rect>
+    <g fill="#8af5ea">
+      <rect x="40" y="0" width="2.4" height="6" rx="1"></rect>
+      <rect x="44" y="0" width="2.4" height="6" rx="1"></rect>
+      <rect x="48" y="0" width="2.4" height="6" rx="1"></rect>
+      <rect x="52" y="0" width="2.4" height="6" rx="1"></rect>
+      <rect x="56" y="0" width="2.4" height="6" rx="1"></rect>
+    </g>
+  </svg>
+</div>
+
+<style>
+  .brush-progress {
+    position: fixed;
+    top: 0;
+    inset-inline: 0;
+    height: 4px;
+    z-index: 70;
+    pointer-events: none;
+  }
+  .brush-progress__foam {
+    height: 100%;
+    width: calc(var(--scroll, 0) * 100%);
+    margin-inline-start: 0;
+    background: linear-gradient(270deg, #fff, var(--teal-300) 40%, var(--teal-500));
+    box-shadow: 0 0 12px rgb(138 245 234 / 0.7);
+    border-radius: 0 0 4px 4px;
+  }
+  .brush-progress__brush {
+    position: absolute;
+    top: 1px;
+    inset-inline-start: calc(var(--scroll, 0) * 100%);
+    transform: translateX(50%) scaleX(-1);
+    filter: drop-shadow(0 2px 6px rgb(0 0 0 / 0.6));
+  }
+</style>

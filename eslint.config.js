@@ -21,6 +21,11 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
   {
+    // סקריפטי QA רצים ב-Node אבל מעבירים פונקציות לדפדפן (page.evaluate)
+    files: ['scripts/qa/**/*.{js,mjs,cjs}'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
+  {
     files: ['admin/**/*.{ts,tsx}'],
     languageOptions: { globals: globals.browser },
     plugins: { 'react-hooks': reactHooks },

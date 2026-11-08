@@ -1,0 +1,43 @@
+---
+import { landing } from '../config/landing';
+import CtaButton from './ui/CtaButton.astro';
+---
+
+<div class="sticky-cta" role="region" aria-label="הזמנה מהירה">
+  <p class="sticky-cta__text">{landing.sticky.text}</p>
+  <CtaButton href="#pricing" location="sticky" size="m" icon={false}>
+    {landing.sticky.cta}
+  </CtaButton>
+</div>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 55;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
+    background: rgb(4 17 26 / 0.86);
+    backdrop-filter: blur(14px) saturate(1.4);
+    border-top: 1px solid var(--stroke);
+    transform: translateY(110%);
+    transition: transform 0.4s var(--ease-out);
+  }
+  :global(.sticky-on) .sticky-cta {
+    transform: none;
+  }
+  .sticky-cta__text {
+    font-weight: 700;
+    font-size: var(--step--1);
+    line-height: 1.3;
+  }
+  @media (min-width: 900px) {
+    .sticky-cta {
+      display: none;
+    }
+  }
+</style>

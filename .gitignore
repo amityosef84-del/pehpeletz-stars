@@ -10,3 +10,5 @@ dist/
 coverage/
 supabase/.branches
 supabase/.temp
+.lighthouseci/
+qa-shots/

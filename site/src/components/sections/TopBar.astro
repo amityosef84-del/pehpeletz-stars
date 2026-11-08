@@ -1,0 +1,52 @@
+---
+import { landing } from '../../config/landing';
+import Icon from '../ui/Icon.astro';
+---
+
+<div class="topbar">
+  <a href="#pricing" class="topbar__link" data-cta="topbar">
+    <Icon name="gift" size={18} />
+    <span>{landing.topBar.text}</span>
+    <span class="topbar__more">{landing.topBar.cta}</span>
+  </a>
+</div>
+
+<style>
+  .topbar {
+    position: relative;
+    z-index: 51;
+    background: linear-gradient(90deg, var(--violet-600), #1b7f8a 50%, var(--violet-600));
+    background-size: 200% 100%;
+    font-size: var(--step--1);
+    font-weight: 600;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .topbar {
+      animation: band 12s linear infinite;
+    }
+  }
+  @keyframes band {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  .topbar__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 6px var(--gutter);
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+  }
+  .topbar__link:hover {
+    color: var(--gold-300);
+  }
+  .topbar__more {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+</style>

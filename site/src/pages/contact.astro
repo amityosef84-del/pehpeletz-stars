@@ -1,0 +1,74 @@
+---
+import Prose from '../layouts/Prose.astro';
+import Todo from '../components/legal/Todo.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site, whatsappLink } from '../config/site';
+---
+
+<Prose title="צור קשר" description="שאלה על הערכה או על הזמנה? כתבו לנו בוואטסאפ." draft={false}>
+  <p>שאלה על הערכה, על הזמנה או על משלוח? אנחנו כאן.</p>
+
+  <div class="contact-cards">
+    <a
+      class="contact-card card"
+      href={whatsappLink()}
+      target="_blank"
+      rel="noopener"
+      data-whatsapp="contact"
+    >
+      <Icon name="whatsapp" size={30} />
+      <span>
+        <strong>וואטסאפ</strong>
+        <span dir="ltr">{site.whatsappDisplay}</span>
+      </span>
+    </a>
+    <div class="contact-card card">
+      <Icon name="sparkle" size={30} />
+      <span>
+        <strong>שעות מענה</strong>
+        <span>{site.supportHours}</span>
+      </span>
+    </div>
+  </div>
+
+  <h2>פרטי העסק</h2>
+  <p>
+    <Todo label="שם העוסק" />, ע.מ/ח.פ <Todo label="מספר" />
+    <br />
+    <Todo label="כתובת" />
+    <br />
+    אימייל: <Todo label="מייל" />
+  </p>
+</Prose>
+
+<style>
+  .contact-cards {
+    margin-top: 20px;
+    display: grid;
+    gap: 14px;
+  }
+  @media (min-width: 600px) {
+    .contact-cards {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .contact-card {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 20px;
+    border-radius: var(--radius-m);
+    color: var(--text);
+    text-decoration: none;
+  }
+  .contact-card > span {
+    display: grid;
+  }
+  a.contact-card:hover {
+    color: var(--text);
+    border-color: #1aa34a;
+  }
+  .contact-card :global(svg) {
+    color: var(--teal-300);
+  }
+</style>

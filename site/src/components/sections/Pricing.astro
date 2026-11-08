@@ -1,0 +1,319 @@
+---
+import { Picture } from 'astro:assets';
+import { landing } from '../../config/landing';
+import { formatIls, packages, quote } from '../../config/packages';
+import Icon from '../ui/Icon.astro';
+import box from '../../assets/photos/box-front.webp';
+
+const pr = landing.pricing;
+const cards = packages.map((p) => ({ ...p, q: quote(p.slug) }));
+---
+
+<section id="pricing" class="section pricing" data-sticky-hide aria-labelledby="pricing-title">
+  <div class="container">
+    <div class="center">
+      <p class="eyebrow" data-reveal>
+        {pr.eyebrow}
+      </p>
+      <h2 id="pricing-title" class="section-title" data-reveal>
+        {pr.title}
+      </h2>
+      <p class="section-lead" data-reveal>
+        {pr.lead}
+      </p>
+    </div>
+
+    <ul class="pricing__grid">
+      {cards.map((c, i) => (
+        <li
+          class="pkg card"
+          class:list={[{ 'pkg--featured': c.featured }]}
+          data-package={c.slug}
+          data-reveal
+          style={`--i:${i}; --n:${c.units}`}
+        >
+          {c.badge && (
+            <p class="pkg__badge">
+              <Icon name="star" size={16} /> {c.badge}
+            </p>
+          )}
+          <div class="pkg__stack" aria-hidden="true" data-vt-box>
+            {Array.from({ length: c.units }, (_, k) => (
+              <span class="pkg__box" style={`--k:${k}`}>
+                <Picture
+                  fallbackFormat="webp"
+                  src={box}
+                  formats={['avif', 'webp']}
+                  widths={[200, 400]}
+                  sizes="(min-width: 960px) 170px, 140px"
+                  alt=""
+                  loading="lazy"
+                />
+              </span>
+            ))}
+          </div>
+          <div class="pkg__info">
+            <h3 class="pkg__name">{c.name}</h3>
+            <p class="pkg__aud">
+              {c.audience} · {c.units === 1 ? 'ערכה אחת' : `${c.units} ערכות`}
+            </p>
+            <p class="pkg__price">
+              <span class="pkg__amount">{formatIls(c.q.total)}</span>
+              <span class="pkg__incl">כולל משלוח</span>
+            </p>
+            <p class="pkg__note">{pr.perKitNote}</p>
+          </div>
+          <a
+            class="pkg__cta"
+            href={`/checkout?pkg=${c.slug}`}
+            data-cta={`pricing-${c.slug}`}
+            data-burst
+            aria-label={`${pr.cta}: ${c.name}, ${c.audience}, ${formatIls(c.q.total)}`}
+          >
+            {pr.cta}
+            <Icon name="arrow" size={18} />
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="pricing__includes card" data-reveal>
+      <p class="pricing__includes-title">כל ערכה כוללת:</p>
+      <ul>
+        {pr.includes.map((x) => (
+          <li>
+            <Icon name="check" size={18} />
+            {x}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <p class="pricing__fine">{pr.finePrint}</p>
+  </div>
+</section>
+
+<style>
+  .pricing__grid {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0 0;
+    display: grid;
+    gap: 16px;
+  }
+  @media (min-width: 640px) {
+    .pricing__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1060px) {
+    .pricing__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-items: stretch;
+    }
+  }
+
+  .pkg {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    gap: 6px 16px;
+    align-items: center;
+    padding: 22px 18px 18px;
+    border-radius: var(--radius-l);
+    transition:
+      transform 0.3s var(--ease-out),
+      border-color 0.3s,
+      box-shadow 0.3s,
+      opacity 0.8s var(--ease-out);
+  }
+  @media (min-width: 640px) {
+    .pkg {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto;
+      text-align: center;
+      padding: 28px 20px 22px;
+    }
+  }
+  .pkg:hover {
+    border-color: rgb(255 201 74 / 0.5);
+  }
+  .pkg--featured {
+    border: 2px solid var(--gold-400);
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgb(255 201 74 / 0.18), transparent 60%),
+      linear-gradient(180deg, var(--surface-2), var(--surface-1));
+    box-shadow:
+      var(--shadow-card),
+      0 0 50px -12px rgb(255 178 30 / 0.55);
+  }
+  @media (min-width: 1060px) {
+    .pkg--featured {
+      transform: translateY(-10px);
+    }
+  }
+  .pkg__badge {
+    position: absolute;
+    top: -14px;
+    inset-inline-start: 50%;
+    translate: 50% 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    border-radius: var(--radius-pill);
+    font-size: var(--step--1);
+    font-weight: 800;
+    white-space: nowrap;
+    color: var(--text-on-gold);
+    background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
+    box-shadow: var(--shadow-glow-gold);
+  }
+
+  /* ערימת קופסאות: מספר הקופסאות = מספר הערכות */
+  .pkg__stack {
+    position: relative;
+    aspect-ratio: 1.28;
+    width: 100%;
+    max-width: 190px;
+    margin-inline: auto;
+  }
+  .pkg__box {
+    position: absolute;
+    width: calc(100% - (var(--n) - 1) * 9%);
+    inset-inline-start: calc(var(--k) * 9%);
+    top: calc(var(--k) * 6%);
+    rotate: calc((var(--k) - (var(--n) - 1) / 2) * 5deg);
+    filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.55));
+    transition:
+      rotate 0.4s var(--ease-spring),
+      translate 0.4s var(--ease-spring);
+  }
+  .pkg__box :global(img) {
+    width: 100%;
+    border-radius: 3px;
+  }
+  .pkg:hover .pkg__box {
+    rotate: calc((var(--k) - (var(--n) - 1) / 2) * 9deg);
+    translate: 0 calc(var(--k) * -3px);
+  }
+
+  .pkg__name {
+    font-size: var(--step-1);
+  }
+  @media (min-width: 1060px) {
+    .pkg__name {
+      min-height: 2.3em;
+      display: grid;
+      align-items: end;
+    }
+  }
+  .pkg__aud {
+    margin-top: 2px;
+    color: var(--text-muted);
+    font-size: var(--step--1);
+    font-weight: 600;
+  }
+  .pkg__price {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+  }
+  @media (min-width: 640px) {
+    .pkg__price {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  .pkg__amount {
+    white-space: nowrap;
+    font-size: var(--step-3);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--gold-300);
+  }
+  .pkg__incl {
+    white-space: nowrap;
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--teal-300);
+  }
+  .pkg__note {
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .pkg__cta {
+    grid-column: 1 / -1;
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 16px;
+    border-radius: var(--radius-pill);
+    font-weight: 800;
+    text-decoration: none;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1px solid var(--stroke-strong);
+    transition:
+      background 0.2s,
+      transform 0.25s var(--ease-spring),
+      color 0.2s;
+  }
+  .pkg__cta:hover,
+  .pkg--featured .pkg__cta {
+    color: var(--text-on-gold);
+    background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
+    border-color: transparent;
+  }
+  .pkg__cta:hover {
+    transform: translateY(-2px);
+  }
+
+  .pricing__includes {
+    margin-top: 28px;
+    padding: 18px 22px;
+    border-radius: var(--radius-m);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 24px;
+  }
+  .pricing__includes-title {
+    font-weight: 800;
+  }
+  .pricing__includes ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+  .pricing__includes li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+  }
+  .pricing__includes :global(svg) {
+    color: var(--teal-300);
+  }
+  .pricing__fine {
+    margin-top: 14px;
+    text-align: center;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  :global(.fx-spark) {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+  }
+</style>

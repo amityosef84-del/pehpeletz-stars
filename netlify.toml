@@ -28,12 +28,14 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
     X-Frame-Options = "DENY"
 
-# CSP נאכף כרגע רק באדמין. לדף הנחיתה הוא יוגדר בסוף שלב 1, ויורחב בשלב 3 עם הפיקסלים.
+# CSP אחד לכל האתר והאדמין. אין סקריפטים inline (astro.config: assetsInlineLimit 0).
+# 'unsafe-inline' רק לסגנונות (משתני CSS ב-style="..."). בשלב 3 יתווספו דומיינים של הפיקסלים.
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+
 [[headers]]
   for = "/admin/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 
 # נכסים עם hash בשם הקובץ: cache לשנה.
 [[headers]]

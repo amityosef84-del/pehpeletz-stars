@@ -1,0 +1,48 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import CtaButton from '../components/ui/CtaButton.astro';
+import robot from '../assets/chars/robot-fly.webp';
+---
+
+<Base title="הדף לא נמצא" noindex>
+  <section class="nf container">
+    <div class="nf__robot" aria-hidden="true">
+      <Picture
+        fallbackFormat="webp"
+        src={robot}
+        formats={['avif', 'webp']}
+        widths={[220, 440]}
+        sizes="200px"
+        alt=""
+        loading="eager"
+      />
+    </div>
+    <h1>אופס, הדף הזה התעופף לגלקסיה אחרת</h1>
+    <p>דנטוריון חיפש בכל מערכת פהפלצת ולא מצא אותו.</p>
+    <CtaButton href="/" location="404">
+      חזרה לדף הבית
+    </CtaButton>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: 40px 100px;
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+  }
+  .nf__robot {
+    width: 190px;
+  }
+  .nf h1 {
+    font-size: var(--step-3);
+    max-width: 22ch;
+  }
+  .nf p {
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+</style>
