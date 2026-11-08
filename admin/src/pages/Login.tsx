@@ -26,7 +26,11 @@ export function Login() {
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: `${location.origin}/admin/`,
     });
-    setError(error ? 'לא הצלחנו לשלוח מייל איפוס' : null);
+    setError(
+      error
+        ? 'שליחת המייל נכשלה (מגבלת מיילים זמנית). נסו שוב בעוד שעה, או בקשו מבעל החשבון קישור כניסה ישיר.'
+        : null,
+    );
     setInfo(error ? null : 'אם הכתובת רשומה, נשלח אליה קישור לאיפוס סיסמה');
   }
 
