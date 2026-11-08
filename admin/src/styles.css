@@ -594,3 +594,102 @@ a {
   font-weight: 600;
   margin-bottom: 12px;
 }
+
+/* ---------- שדה סיסמה ---------- */
+.pw {
+  display: grid;
+  gap: 4px;
+}
+.pw label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.pw__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pw__row input {
+  flex: 1 1 200px;
+  font: inherit;
+  font-size: 16px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  text-align: right;
+}
+.btn--small {
+  min-height: 44px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+}
+.small {
+  font-size: 0.82rem;
+}
+.stack {
+  display: grid;
+  gap: 14px;
+  max-width: 640px;
+}
+.field {
+  display: grid;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.field input,
+.field select,
+.field textarea {
+  font: inherit;
+  font-size: 16px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+.field input[dir='ltr'] {
+  text-align: right;
+}
+.admins {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+.admins__item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--grid);
+}
+.admins__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.admins__email {
+  font-weight: 700;
+  text-align: right;
+}
+.admins__reset {
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;
+  max-width: 640px;
+}
+.creds {
+  border-color: var(--up);
+}
+.creds__box {
+  font: inherit;
+  white-space: pre-wrap;
+  background: var(--surface-2);
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 0 0 10px;
+}

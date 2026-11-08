@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { configured, supabase } from './lib/supabase';
+import { configured, needsPassword, passwordSet, supabase } from './lib/supabase';
 import { Login } from './pages/Login';
 import { SetPassword } from './pages/SetPassword';
 import { Analytics } from './pages/Analytics';
@@ -30,18 +30,17 @@ export function App() {
     const check = async (s: Session | null) => {
       setSession(s);
       if (!s) return setGate('anon');
+      // הגיע מקישור הזמנה/איפוס: קודם בוחרים סיסמה, ורק אז נכנסים
+      if (needsPassword()) return setGate('set-password');
       const { data } = await supabase!.rpc('is_admin');
       setGate(data === true ? 'admin' : 'not-admin');
     };
     supabase.auth.getSession().then(({ data }) => check(data.session));
     const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
-      if (
-        event === 'PASSWORD_RECOVERY' ||
-        (event === 'SIGNED_IN' && /type=(invite|recovery)/.test(location.hash))
-      ) {
+      if (event === 'PASSWORD_RECOVERY') {
         setSession(s);
         setGate('set-password');
-      } else check(s);
+      } else if (event !== 'TOKEN_REFRESHED' && event !== 'USER_UPDATED') check(s);
     });
     return () => sub.subscription.unsubscribe();
   }, []);
@@ -61,7 +60,17 @@ export function App() {
   }
   if (gate === 'loading') return <p className="muted center">טוען…</p>;
   if (gate === 'anon') return <Login />;
-  if (gate === 'set-password') return <SetPassword onDone={() => setGate('admin')} />;
+  if (gate === 'set-password')
+    return (
+      <SetPassword
+        email={session?.user.email ?? ''}
+        onDone={async () => {
+          passwordSet();
+          const { data } = await supabase!.rpc('is_admin');
+          setGate(data === true ? 'admin' : 'not-admin');
+        }}
+      />
+    );
   if (gate === 'not-admin') {
     return (
       <main className="login">
