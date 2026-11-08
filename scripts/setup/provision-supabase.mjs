@@ -61,12 +61,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const sql = (ref, query) =>
   sb(`/v1/projects/${ref}/database/query`, { method: 'POST', body: JSON.stringify({ query }) });
 
-// 1. פרויקט
-const orgs = await sb('/v1/organizations');
-const org = args.org ? orgs.find((o) => o.slug === args.org || o.id === args.org) : orgs[0];
-if (!org) throw new Error('No Supabase organization found');
+// 1. פרויקט: אם קיים פרויקט בשם הזה (בכל ארגון נגיש) משתמשים בו
 let project = (await sb('/v1/projects')).find((p) => p.name === NAME);
 if (!project) {
+  const orgs = await sb('/v1/organizations');
+  const org = args.org ? orgs.find((o) => o.slug === args.org || o.id === args.org) : orgs[0];
+  if (!org) throw new Error('No Supabase organization found');
   console.log(`creating project "${NAME}" in ${REGION} (org ${org.name})…`);
   project = await sb('/v1/projects', {
     method: 'POST',
@@ -78,7 +78,7 @@ if (!project) {
       db_pass: randomBytes(24).toString('base64url'),
     }),
   });
-} else console.log(`project "${NAME}" exists (${project.id})`);
+} else console.log(`project "${NAME}" exists (${project.id}, region ${project.region})`);
 const ref = project.id ?? project.ref;
 
 for (let i = 0; i < 90; i++) {
@@ -136,12 +136,15 @@ const existing = new Set(
   (await nl(`/accounts/${account}/env?site_id=${NETLIFY_SITE}`)).map((e) => e.key),
 );
 for (const [key, value, secret] of vars) {
-  const body = {
-    key,
-    scopes: ['builds', 'functions', 'runtime'],
-    values: [{ value, context: 'all' }],
-    is_secret: secret,
-  };
+  // בתוכנית החינמית של Netlify אי אפשר לבחור scopes או לסמן secret (--paid מפעיל אותם)
+  const body = args.paid
+    ? {
+        key,
+        scopes: ['builds', 'functions', 'runtime'],
+        values: [{ value, context: 'all' }],
+        is_secret: secret,
+      }
+    : { key, values: [{ value, context: 'all' }] };
   if (existing.has(key)) {
     await nl(`/accounts/${account}/env/${key}?site_id=${NETLIFY_SITE}`, {
       method: 'PUT',
