@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@pehpeletz/shared';
+import type { OrderStatus } from '../../shared/src/orders';
 
 /**
  * ולידציה לפעולות מערכת הניהול (שלב 4). טהור, בלי DB, נבדק ביחידה.
@@ -6,7 +6,7 @@ import type { OrderStatus } from '@pehpeletz/shared';
  */
 
 export type Role = 'owner' | 'staff';
-export { canTransition, TRANSITIONS, type OrderStatus } from '@pehpeletz/shared';
+export { canTransition, TRANSITIONS, type OrderStatus } from '../../shared/src/orders';
 
 export interface ShippingSetting {
   mode: 'per_unit' | 'flat' | 'free';
