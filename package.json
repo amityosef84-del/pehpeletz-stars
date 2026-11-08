@@ -25,7 +25,8 @@
     "qa:shots": "node scripts/qa/shots.mjs http://127.0.0.1:4321 qa-shots / /checkout /privacy",
     "qa:lighthouse": "lhci autorun",
     "qa:tracking": "node scripts/qa/tracking-flow.mjs http://127.0.0.1:4321",
-    "qa:pixels": "node scripts/qa/pixels-flow.mjs http://127.0.0.1:4321"
+    "qa:pixels": "node scripts/qa/pixels-flow.mjs http://127.0.0.1:4321",
+    "qa:admin": "node scripts/qa/admin-flow.mjs http://127.0.0.1:4321"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

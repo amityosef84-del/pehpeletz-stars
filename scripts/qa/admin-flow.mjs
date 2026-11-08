@@ -1,0 +1,51 @@
+// זרימת מערכת הניהול בנתוני דוגמה: node scripts/qa/admin-flow.mjs <baseUrl>
+import { createRequire } from 'node:module';
+
+const { chromium } = createRequire(import.meta.url)('playwright');
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 390, height: 844 } });
+const errs = [];
+p.on('pageerror', (e) => errs.push(e.message));
+p.on('dialog', (d) => d.accept());
+const base = `${process.argv[2] ?? 'http://127.0.0.1:4321'}/admin/?demo`;
+await p.goto(base + '#orders/eeeeeeee-0000-4000-8000-000000000001');
+await p.getByRole('button', { name: 'סימון כארוזה' }).click();
+await p.getByText('הסטטוס עודכן').waitFor();
+await p.getByLabel('מספר מעקב').fill('RR999IL');
+await p.getByRole('button', { name: 'סימון כנשלחה' }).click();
+await p.getByText('הסטטוס עודכן: נשלחה').waitFor();
+console.log('status flow ok; badge:', await p.locator('h1 .st').innerText());
+await p.getByPlaceholder(/רק הצוות/).fill('בדיקה');
+await p.getByRole('button', { name: 'הוספת הערה' }).click();
+await p.locator('.timeline').getByText('בדיקה').waitFor();
+console.log('note ok');
+await p.goto(base + '#coupons');
+await p.getByRole('button', { name: 'קופון חדש' }).click();
+await p.getByLabel('קוד').fill('test15');
+await p.getByLabel('אחוז הנחה').fill('15');
+await p.getByRole('button', { name: 'שמירה' }).click();
+await p.getByText('הקופון TEST15 נשמר').waitFor();
+console.log('coupon ok');
+await p.goto(base + '#products');
+const first = p.locator('form.product').first();
+await first.getByLabel('מלאי').fill('0');
+await first.getByRole('button', { name: 'שמירה' }).click();
+await p.getByText(/האתר מתעדכן/).waitFor();
+console.log('product ok');
+await p.goto(base + '#abandoned');
+const before = await p.locator('.ocard').count();
+await p.getByRole('button', { name: 'סימון שפנינו' }).first().click();
+await p.waitForTimeout(600);
+const after = await p.locator('.ocard').count();
+if (after !== before - 1) throw new Error(`abandoned: expected ${before - 1}, got ${after}`);
+console.log('abandoned ok');
+await p.goto(base + '#settings');
+await p.getByLabel('ח.פ / מספר עוסק').fill('12');
+await p.getByRole('button', { name: 'שמירה' }).nth(1).click();
+await p.waitForTimeout(500);
+await b.close();
+if (errs.length) {
+  console.error('page errors:', errs);
+  process.exit(1);
+}
+console.log('admin flow ok');

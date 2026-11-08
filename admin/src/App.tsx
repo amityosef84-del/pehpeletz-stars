@@ -6,6 +6,35 @@ import { SetPassword } from './pages/SetPassword';
 import { Analytics } from './pages/Analytics';
 import { OrderAlerts } from './components/OrderAlerts';
 import { Admins } from './pages/Admins';
+import { Home } from './pages/Home';
+import { Orders } from './pages/Orders';
+import { OrderDetail } from './pages/OrderDetail';
+import { CustomerDetail, Customers } from './pages/Customers';
+import { Products } from './pages/Products';
+import { Coupons } from './pages/Coupons';
+import { Abandoned } from './pages/Abandoned';
+import { Settings } from './pages/Settings';
+import { api } from './lib/store';
+
+const NAV = [
+  { key: 'home', label: 'בית' },
+  { key: 'orders', label: 'הזמנות' },
+  { key: 'abandoned', label: 'עגלות נטושות' },
+  { key: 'customers', label: 'לקוחות' },
+  { key: 'analytics', label: 'אנליטיקס' },
+  { key: 'products', label: 'מוצרים', owner: true },
+  { key: 'coupons', label: 'קופונים', owner: true },
+  { key: 'settings', label: 'הגדרות', owner: true },
+  { key: 'admins', label: 'מנהלים' },
+] as const;
+type View = (typeof NAV)[number]['key'];
+
+/** ניתוב לפי hash: #orders, #orders/<id>, #customers/<id> ... */
+function parseHash(): { view: View; id?: string } {
+  const [v, id] = location.hash.replace(/^#\/?/, '').split('/');
+  const view = (NAV.find((n) => n.key === v)?.key ?? 'home') as View;
+  return { view, id: id || undefined };
+}
 
 type Gate = 'loading' | 'anon' | 'set-password' | 'not-admin' | 'admin';
 
@@ -13,17 +42,21 @@ export function App() {
   const demo = new URLSearchParams(location.search).has('demo') && !configured;
   const [gate, setGate] = useState<Gate>(demo ? 'admin' : 'loading');
   const [session, setSession] = useState<Session | null>(null);
-  const [view, setView] = useState<'analytics' | 'admins'>(() =>
-    location.hash === '#admins' ? 'admins' : 'analytics',
-  );
-  const go = (v: 'analytics' | 'admins') => {
-    setView(v);
-    history.replaceState(
-      null,
-      '',
-      v === 'admins' ? '#admins' : location.pathname + location.search,
-    );
-  };
+  const [route, setRoute] = useState(parseHash);
+  const [role, setRole] = useState<'owner' | 'staff'>('owner');
+
+  useEffect(() => {
+    const on = () => {
+      setRoute(parseHash());
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('hashchange', on);
+    return () => window.removeEventListener('hashchange', on);
+  }, []);
+
+  useEffect(() => {
+    if (gate === 'admin') api.role(demo).then(setRole, () => setRole('staff'));
+  }, [gate, demo]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -84,34 +117,41 @@ export function App() {
       </main>
     );
   }
+  const nav = NAV.filter((n) => !('owner' in n) || role === 'owner');
+  const { view, id } = route;
+  const page = (() => {
+    if (view === 'orders')
+      return id ? <OrderDetail key={id} demo={demo} id={id} /> : <Orders demo={demo} />;
+    if (view === 'customers')
+      return id ? <CustomerDetail key={id} demo={demo} id={id} /> : <Customers demo={demo} />;
+    if (view === 'abandoned') return <Abandoned demo={demo} />;
+    if (view === 'analytics') return <Analytics demo={demo} />;
+    if (view === 'admins') return <Admins demo={demo} />;
+    if (role === 'owner' && view === 'products') return <Products demo={demo} />;
+    if (role === 'owner' && view === 'coupons') return <Coupons demo={demo} />;
+    if (role === 'owner' && view === 'settings') return <Settings demo={demo} />;
+    return <Home demo={demo} />;
+  })();
+
   return (
     <div className="shell">
+      <a className="skip" href="#main">
+        דילוג לתוכן
+      </a>
       <nav className="nav" aria-label="ניווט ראשי">
         <p className="nav__brand">פהפלצת · ניהול</p>
         <ul>
-          <li>
-            <button
-              type="button"
-              className="nav__link"
-              aria-current={view === 'analytics' ? 'page' : undefined}
-              onClick={() => go('analytics')}
-            >
-              אנליטיקס
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              className="nav__link"
-              aria-current={view === 'admins' ? 'page' : undefined}
-              onClick={() => go('admins')}
-            >
-              מנהלים
-            </button>
-          </li>
-          <li className="nav__soon">הזמנות (שלב 4)</li>
-          <li className="nav__soon">לקוחות (שלב 4)</li>
-          <li className="nav__soon">מוצרים וקופונים (שלב 4)</li>
+          {nav.map((n) => (
+            <li key={n.key}>
+              <a
+                className="nav__link"
+                href={`#${n.key === 'home' ? '' : n.key}`}
+                aria-current={view === n.key ? 'page' : undefined}
+              >
+                {n.label}
+              </a>
+            </li>
+          ))}
         </ul>
         {!demo && (
           <button
@@ -123,9 +163,9 @@ export function App() {
           </button>
         )}
       </nav>
-      <main className="main">
+      <main className="main" id="main" tabIndex={-1}>
         <OrderAlerts demo={demo} />
-        {view === 'analytics' ? <Analytics demo={demo} /> : <Admins demo={demo} />}
+        {page}
       </main>
     </div>
   );

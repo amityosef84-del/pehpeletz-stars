@@ -693,3 +693,523 @@ a {
   border-radius: 10px;
   margin: 0 0 10px;
 }
+
+/* ---------- שלב 4: ניווט ---------- */
+.skip {
+  position: absolute;
+  inset-inline-start: 8px;
+  top: -60px;
+  z-index: 20;
+  background: var(--link);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+.skip:focus {
+  top: 8px;
+}
+.main:focus {
+  outline: none;
+}
+@media (max-width: 899px) {
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 10px 12px 0;
+    gap: 4px 12px;
+  }
+  .nav ul {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    order: 3;
+    gap: 6px;
+    padding-bottom: 10px;
+    scrollbar-width: none;
+  }
+  .nav ul::-webkit-scrollbar {
+    display: none;
+  }
+  .nav .nav__link {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    min-height: 40px;
+  }
+  .nav .nav__link[aria-current='page'] {
+    background: var(--link);
+    color: #fff;
+    text-decoration: none;
+  }
+  .nav__out {
+    min-height: 36px;
+  }
+}
+@media (min-width: 900px) {
+  .nav {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    min-height: 100dvh;
+  }
+  .nav .nav__link {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+  .nav .nav__link[aria-current='page'] {
+    background: var(--surface-2);
+    text-decoration: none;
+  }
+}
+
+/* ---------- רשימות וכרטיסים ---------- */
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.search {
+  flex: 1 1 260px;
+}
+.search input,
+.field--inline select {
+  font: inherit;
+  font-size: 16px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-1);
+  color: var(--text-primary);
+}
+.field--inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.field--inline select {
+  width: auto;
+}
+.seg {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.ocard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    'num name total'
+    'meta meta meta'
+    'badges badges badges';
+  gap: 4px 10px;
+  align-items: baseline;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+a.ocard:hover {
+  border-color: var(--link);
+}
+.ocard__num {
+  grid-area: num;
+  font-weight: 800;
+}
+.ocard__name {
+  grid-area: name;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ocard__total {
+  grid-area: total;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.ocard__meta {
+  grid-area: meta;
+}
+.ocard__badges {
+  grid-area: badges;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 2px;
+}
+.ocard--static .ocard__badges {
+  margin-top: 6px;
+}
+@media (min-width: 900px) {
+  .ocard {
+    grid-template-columns: 90px minmax(0, 1fr) auto 110px;
+    grid-template-areas:
+      'num name badges total'
+      'num meta badges total';
+  }
+  .ocard__total {
+    text-align: end;
+  }
+  .ocard__badges {
+    justify-content: flex-end;
+    margin-top: 0;
+  }
+  .ocard--static .ocard__badges {
+    margin-top: 0;
+  }
+}
+.empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-secondary);
+}
+
+/* תגיות סטטוס: צבע + טקסט (לא רק צבע) */
+.st {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.st--paid,
+.st--pending {
+  background: #fff1d6;
+  color: #7a4a00;
+}
+.st--packed {
+  background: #e3ecfb;
+  color: #1d4f99;
+}
+.st--shipped {
+  background: #e6e2fb;
+  color: #4b3aa8;
+}
+.st--delivered {
+  background: #ddf3e4;
+  color: #0b6b2c;
+}
+.st--cancelled,
+.st--refunded,
+.st--pay-failed,
+.st--pay-refunded {
+  background: #fde5e3;
+  color: #9d1c12;
+}
+.st--pay-paid {
+  background: #ddf3e4;
+  color: #0b6b2c;
+}
+.st--pay-pending,
+.st--pay-unpaid,
+.st--pay-partially_refunded {
+  background: #fff1d6;
+  color: #7a4a00;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) .st--paid,
+  :root:where(:not([data-theme='light'])) .st--pending,
+  :root:where(:not([data-theme='light'])) .st--pay-pending,
+  :root:where(:not([data-theme='light'])) .st--pay-unpaid,
+  :root:where(:not([data-theme='light'])) .st--pay-partially_refunded {
+    background: #3a2a0a;
+    color: #f5c66b;
+  }
+  :root:where(:not([data-theme='light'])) .st--packed {
+    background: #17294a;
+    color: #9cc2f5;
+  }
+  :root:where(:not([data-theme='light'])) .st--shipped {
+    background: #251f4a;
+    color: #b9adf7;
+  }
+  :root:where(:not([data-theme='light'])) .st--delivered,
+  :root:where(:not([data-theme='light'])) .st--pay-paid {
+    background: #0f3320;
+    color: #7fdc9d;
+  }
+  :root:where(:not([data-theme='light'])) .st--cancelled,
+  :root:where(:not([data-theme='light'])) .st--refunded,
+  :root:where(:not([data-theme='light'])) .st--pay-failed,
+  :root:where(:not([data-theme='light'])) .st--pay-refunded {
+    background: #3d1512;
+    color: #ff9d94;
+  }
+}
+.page__head h1 .st {
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+/* ---------- בית ---------- */
+@media (min-width: 900px) {
+  .kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.kpi--link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.kpi--link:hover {
+  border-color: var(--link);
+}
+.kpi--todo {
+  border-color: var(--accent);
+  border-width: 2px;
+}
+.kpi__value--sm {
+  font-size: 1.1rem;
+}
+.mini {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+}
+.mini li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--grid);
+}
+.mini li a {
+  font-weight: 600;
+  text-decoration: none;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.mini li .st {
+  margin-inline-start: auto;
+}
+
+/* ---------- פרטי הזמנה ---------- */
+.dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 14px;
+  margin: 0 0 12px;
+}
+.dl dt {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.dl dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.dl dd[dir='ltr'],
+.dl a[dir='ltr'] {
+  unicode-bidi: isolate;
+}
+.hl {
+  background: #fff6d9;
+  color: #5a3d00;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.sum th {
+  text-align: start;
+  font-weight: 400;
+}
+.sum__total th,
+.sum__total td {
+  font-weight: 800;
+  border-top: 2px solid var(--stroke);
+}
+.pay-line {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0;
+}
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+.inline-form .field {
+  flex: 1 1 200px;
+}
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-inline-start: 2px solid var(--grid);
+}
+.timeline li {
+  position: relative;
+  padding: 0 16px 14px;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -7px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--surface-1);
+  border: 2px solid var(--link);
+}
+.timeline__note p:first-child {
+  background: var(--surface-2);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.slip {
+  display: none;
+}
+
+/* ---------- טפסים ---------- */
+.form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+.product .field input {
+  width: 100%;
+}
+.product__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  min-height: 44px;
+  cursor: pointer;
+}
+.switch input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--link);
+}
+.warn {
+  background: #fff1d6;
+  color: #5a3d00;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+.info p + p {
+  margin-top: 8px;
+}
+.btn--wa {
+  background: #0b6b3a;
+  border-color: #0b6b3a;
+  color: #fff;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+a.btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) .warn,
+  :root:where(:not([data-theme='light'])) .hl {
+    background: #3a2a0a;
+    color: #f5d79a;
+  }
+}
+
+/* ---------- הדפסת תעודת משלוח ---------- */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .slip,
+  .slip * {
+    visibility: visible;
+  }
+  .slip {
+    display: block;
+    position: absolute;
+    inset: 0;
+    padding: 24px;
+    color: #000;
+    font-size: 16pt;
+    line-height: 1.6;
+  }
+  .slip h2 {
+    font-size: 20pt;
+    margin-bottom: 8px;
+  }
+  .slip__num {
+    font-size: 26pt;
+    font-weight: 800;
+    border: 3px solid #000;
+    display: inline-block;
+    padding: 4px 14px;
+    margin-bottom: 14px;
+  }
+  .slip p {
+    margin: 0 0 12px;
+  }
+  .slip__thanks {
+    margin-top: 24px !important;
+    font-style: italic;
+  }
+}
+.shell {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 900px) {
+  .shell {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+}
+.nav,
+.nav ul {
+  min-width: 0;
+}

@@ -197,6 +197,18 @@ await sql(
 );
 console.log('order webhook configured in the database');
 
+// 6. build hook: שינוי מחירים/משלוח במערכת הניהול בונה מחדש את האתר (הקטלוג נקרא בזמן build)
+const hooks = await nl(`/sites/${NETLIFY_SITE}/build_hooks`);
+let hook = hooks.find((h) => h.title === 'admin-catalog');
+if (!hook) {
+  hook = await nl(`/sites/${NETLIFY_SITE}/build_hooks`, {
+    method: 'POST',
+    body: JSON.stringify({ title: 'admin-catalog', branch: 'main' }),
+  });
+}
+if (valueOf('NETLIFY_BUILD_HOOK_URL') !== hook.url)
+  await putEnv('NETLIFY_BUILD_HOOK_URL', hook.url);
+
 console.log(
   `done. project ref: ${ref}. Trigger a Netlify deploy so the new variables take effect.`,
 );

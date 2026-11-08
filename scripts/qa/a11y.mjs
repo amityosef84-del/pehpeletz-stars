@@ -22,6 +22,14 @@ const paths = rest.length
       '/404',
       '/admin/',
       '/admin/?demo',
+      '/admin/?demo#orders',
+      '/admin/?demo#orders/eeeeeeee-0000-4000-8000-000000000001',
+      '/admin/?demo#customers',
+      '/admin/?demo#abandoned',
+      '/admin/?demo#products',
+      '/admin/?demo#coupons',
+      '/admin/?demo#settings',
+      '/admin/?demo#admins',
     ];
 
 const browser = await chromium.launch();

@@ -50,6 +50,7 @@ jobs:
       - run: npm run qa:a11y
       - run: npm run qa:checkout
       - run: npm run qa:tracking
+      - run: npm run qa:admin
       - name: Consent banner + pixels (build with fake pixel IDs)
         run: |
           PUBLIC_META_PIXEL_ID=111 PUBLIC_GA4_ID=G-TEST PUBLIC_TIKTOK_PIXEL_ID=TT1 npm run build -w site

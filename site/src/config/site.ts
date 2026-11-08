@@ -2,7 +2,10 @@
  * פרטי העסק, יצירת קשר ודגלים. פריטים עם TODO_LEGAL ממתינים להשלמה/בדיקת עו"ד
  * ומסומנים בדפי המדיניות בצבע בולט כדי שלא יתפספסו.
  */
+import { catalog } from './catalog';
+
 export const TODO_LEGAL = '[להשלמה]';
+const store = catalog.store ?? {};
 
 export const site = {
   brand: 'הכוכבים של פהפלצת',
@@ -13,24 +16,26 @@ export const site = {
   locale: 'he_IL',
 
   // יצירת קשר
-  whatsapp: '972506705556',
-  whatsappDisplay: '050-670-5556',
+  whatsapp: store.whatsapp || '972506705556',
+  whatsappDisplay: (store.whatsapp || '972506705556')
+    .replace(/^972/, '0')
+    .replace(/^(\d{3})(\d{3})(\d+)$/, '$1-$2-$3'),
   whatsappMessage: 'היי, יש לי שאלה על ערכת הכוכבים של פהפלצת',
-  supportEmail: '', // TODO: מייל תמיכה
+  supportEmail: store.email || '', // נקבע במערכת הניהול → הגדרות
   supportHours: 'א׳–ה׳, 9:00–18:00',
 
   // פרטי עוסק (חובה בעסקת מכר מרחוק). להשלמה ע"י הלקוח/עו"ד.
   legal: {
-    businessName: TODO_LEGAL,
-    businessId: TODO_LEGAL,
-    address: TODO_LEGAL,
+    businessName: store.legal_name || TODO_LEGAL,
+    businessId: store.business_id || TODO_LEGAL,
+    address: store.address || TODO_LEGAL,
     accessibilityCoordinator: TODO_LEGAL,
     accessibilityContact: TODO_LEGAL,
     policiesUpdated: '8 בנובמבר 2026',
   },
 
   shipping: {
-    perKit: 50,
+    perKit: catalog.shipping?.mode === 'per_unit' ? catalog.shipping.amount : 50,
     maxBusinessDays: 10,
     label: 'משלוח עד הבית',
   },

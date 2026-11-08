@@ -6,7 +6,7 @@ import { DEFAULT_PACKAGE, formatIls, packages, quote } from '../config/packages'
 import { site } from '../config/site';
 import box from '../assets/photos/box-front.webp';
 
-const options = packages.map((p) => ({ ...p, q: quote(p.slug) }));
+const options = packages.filter((p) => !p.soldOut).map((p) => ({ ...p, q: quote(p.slug) }));
 const initial = options.find((o) => o.slug === DEFAULT_PACKAGE) ?? options[0]!;
 ---
 

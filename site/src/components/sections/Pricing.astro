@@ -63,16 +63,20 @@ const cards = packages.map((p) => ({ ...p, q: quote(p.slug) }));
             </p>
             <p class="pkg__note">{pr.perKitNote}</p>
           </div>
-          <a
-            class="pkg__cta"
-            href={`/checkout?pkg=${c.slug}`}
-            data-cta={`pricing-${c.slug}`}
-            data-burst
-            aria-label={`${pr.cta}: ${c.name}, ${c.audience}, ${formatIls(c.q.total)}`}
-          >
-            {pr.cta}
-            <Icon name="arrow" size={18} />
-          </a>
+          {c.soldOut ? (
+            <p class="pkg__cta pkg__cta--out">אזל זמנית</p>
+          ) : (
+            <a
+              class="pkg__cta"
+              href={`/checkout?pkg=${c.slug}`}
+              data-cta={`pricing-${c.slug}`}
+              data-burst
+              aria-label={`${pr.cta}: ${c.name}, ${c.audience}, ${formatIls(c.q.total)}`}
+            >
+              {pr.cta}
+              <Icon name="arrow" size={18} />
+            </a>
+          )}
         </li>
       ))}
     </ul>
@@ -263,6 +267,11 @@ const cards = packages.map((p) => ({ ...p, q: quote(p.slug) }));
       background 0.2s,
       transform 0.25s var(--ease-spring),
       color 0.2s;
+  }
+  .pkg__cta--out {
+    background: var(--surface-2);
+    color: var(--text-muted);
+    cursor: default;
   }
   .pkg__cta:hover,
   .pkg--featured .pkg__cta {
