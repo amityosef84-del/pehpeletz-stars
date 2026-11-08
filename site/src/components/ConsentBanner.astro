@@ -1,0 +1,81 @@
+---
+// באנר הסכמה לעוגיות שיווקיות. מוצג רק אם הוגדר לפחות פיקסל אחד (PUBLIC_META_PIXEL_ID וכו').
+const configured = Boolean(
+  import.meta.env.PUBLIC_META_PIXEL_ID ||
+  import.meta.env.PUBLIC_GA4_ID ||
+  import.meta.env.PUBLIC_TIKTOK_PIXEL_ID,
+);
+---
+
+{configured && (
+  <section class="consent" data-consent hidden aria-labelledby="consent-title">
+    <div class="consent__box">
+      <h2 id="consent-title" class="consent__title">
+        עוגיות ופרסום
+      </h2>
+      <p class="consent__text">
+        אנחנו משתמשים בעוגיות של Meta, Google ו-TikTok כדי למדוד את הקמפיינים ולהציג פרסומות
+        רלוונטיות. אפשר לאשר או להסתפק בעוגיות ההכרחיות בלבד.{' '}
+        <a href="/privacy">למדיניות הפרטיות</a>
+      </p>
+      <div class="consent__actions">
+        <button type="button" class="consent__btn consent__btn--yes" data-consent-choice="granted">
+          מאשר/ת
+        </button>
+        <button type="button" class="consent__btn" data-consent-choice="denied">
+          רק הכרחיות
+        </button>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .consent {
+    position: fixed;
+    inset-inline: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 80;
+    display: flex;
+    justify-content: center;
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  .consent__box {
+    width: min(100%, 640px);
+    padding: 18px 20px;
+    border-radius: var(--radius-m);
+    background: rgb(7 26 38 / 0.97);
+    border: 1px solid var(--stroke-strong);
+    box-shadow: 0 20px 60px -10px rgb(0 0 0 / 0.8);
+  }
+  .consent__title {
+    font-size: var(--step-1);
+  }
+  .consent__text {
+    margin-top: 6px;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .consent__actions {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .consent__btn {
+    min-height: 44px;
+    padding: 8px 20px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--stroke-strong);
+    background: var(--surface-2);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .consent__btn--yes {
+    border-color: transparent;
+    color: var(--text-on-gold);
+    background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
+  }
+</style>

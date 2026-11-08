@@ -34,6 +34,9 @@ const year = new Date().getFullYear();
       © {year} {site.brand}. כל הזכויות שמורות.
     </p>
     <p>איורים: רמון אטלי</p>
+    <button type="button" class="site-footer__cookies" data-consent-open hidden>
+      הגדרות עוגיות
+    </button>
   </div>
 </footer>
 
@@ -91,6 +94,15 @@ const year = new Date().getFullYear();
   }
   .site-footer__hours {
     margin-top: 6px;
+  }
+  .site-footer__cookies {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--text-muted);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
   }
   .site-footer__bottom {
     margin-top: 32px;

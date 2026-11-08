@@ -12,4 +12,7 @@ for f in supabase/migrations/*.sql; do
   echo "→ $f"
   "${PSQL[@]}" -f "$f"
 done
-"${PSQL[@]}" -f supabase/tests/10_rls_test.sql
+for t in supabase/tests/*_test.sql; do
+  echo "→ $t"
+  "${PSQL[@]}" -f "$t"
+done

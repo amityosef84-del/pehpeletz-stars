@@ -3,6 +3,8 @@
  * הסכומים כאן לתצוגה בלבד. השרת (create-order, שלב 2) מחשב הכל מחדש מה-DB.
  */
 import { burst } from './fx';
+import { attribution, readCookie, sessionId, track, visitorId } from './track';
+import { getConsent } from './pixels';
 
 type Rule = (v: string, form: HTMLFormElement) => string | null;
 
@@ -101,6 +103,12 @@ function init(form: HTMLFormElement) {
       const u = new URL(location.href);
       u.searchParams.set('pkg', r.value);
       history.replaceState(null, '', u);
+      track('select_package', {
+        package: r.value,
+        location: 'checkout',
+        value: Number(r.dataset.total),
+      });
+      saveDraft();
       const box = form.querySelector('.summary__img');
       if (box) {
         const rc = box.getBoundingClientRect();
@@ -109,6 +117,47 @@ function init(form: HTMLFormElement) {
     }),
   );
   renderSummary();
+  track('begin_checkout', { package: selected().value, value: Number(selected().dataset.total) });
+
+  // ---------- מעקב מילוי שדות (רק שם השדה, לעולם לא התוכן) ----------
+  const filled = new Set<string>();
+  form.addEventListener('focusout', (e) => {
+    const el = e.target as HTMLInputElement;
+    if (!el.name || el.name === 'company' || el.type === 'radio' || el.type === 'checkbox') return;
+    if (el.value.trim() && !filled.has(el.name)) {
+      filled.add(el.name);
+      track('checkout_field_filled', { field: el.name });
+    }
+    if (el.name === 'phone' || el.name === 'email' || el.name === 'name') saveDraft();
+  });
+
+  // ---------- עגלה נטושה: נשמרת בשרת כשיש טלפון או מייל תקינים ----------
+  let lastDraft = '';
+  function saveDraft() {
+    const phone = normalizeIlMobile(field('phone')?.value ?? '');
+    const emailRaw = (field('email')?.value ?? '').trim();
+    const email = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailRaw) ? emailRaw : null;
+    if (!phone && !email) return;
+    const r = selected();
+    const body = JSON.stringify({
+      visitor_id: visitorId,
+      session_id: sessionId,
+      name: (field('name')?.value ?? '').trim() || null,
+      phone,
+      email,
+      package_slug: r.value,
+      total: Number(r.dataset.total),
+      company: field('company')?.value ?? '',
+    });
+    if (body === lastDraft) return;
+    lastDraft = body;
+    fetch('/api/checkout-draft', {
+      method: 'POST',
+      body,
+      headers: { 'content-type': 'application/json' },
+      keepalive: true,
+    }).catch(() => {});
+  }
 
   // ---------- טיוטה מקומית (נוחות בלבד; אף פעם לא אמצעי תשלום) ----------
   try {
@@ -173,6 +222,10 @@ function init(form: HTMLFormElement) {
 
     const fd = new FormData(form);
     if (String(fd.get('company') ?? '')) return; // בוט
+    const coupon = String(fd.get('coupon') ?? '').trim();
+    const total = Number(selected().dataset.total);
+    if (coupon) track('coupon_applied', { package: selected().value });
+    const paymentEventId = track('add_payment_info', { package: selected().value, value: total });
 
     const payload = {
       items: [{ productId: selected().value, qty: 1 }],
@@ -192,6 +245,16 @@ function init(form: HTMLFormElement) {
         notes: String(fd.get('notes') ?? '').trim(),
       },
       termsAccepted: true,
+      // ייחוס ומעקב: לשיוך ההזמנה לקמפיין ולשליחת Purchase מהשרת (שלב 2)
+      tracking: {
+        visitorId,
+        sessionId,
+        attribution,
+        fbp: readCookie('_fbp'),
+        ga: readCookie('_ga'),
+        marketingCookies: getConsent() === 'granted',
+        paymentEventId,
+      },
     };
 
     if (form.dataset.enabled !== 'true') {

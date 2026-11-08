@@ -29,8 +29,9 @@
     X-Frame-Options = "DENY"
 
 # CSP אחד לכל האתר והאדמין. אין סקריפטים inline (astro.config: assetsInlineLimit 0).
-# 'unsafe-inline' רק לסגנונות (משתני CSS ב-style="..."). בשלב 3 יתווספו דומיינים של הפיקסלים.
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+# 'unsafe-inline' רק לסגנונות (משתני CSS ב-style="..."). הדומיינים של Meta/Google/TikTok
+# נחוצים לפיקסלים, שנטענים רק אחרי הסכמה בבאנר העוגיות.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://connect.facebook.net https://www.googletagmanager.com https://analytics.tiktok.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://www.facebook.com https://*.google-analytics.com https://*.googletagmanager.com https://*.tiktok.com; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.facebook.com https://connect.facebook.net https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://analytics.tiktok.com https://*.tiktokw.us https://*.tiktok.com; frame-src https://www.facebook.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
 
 [[headers]]
   for = "/admin/*"

@@ -3,14 +3,14 @@
 דף נחיתה ממוקד המרה, תשלום בסאמיט ומערכת ניהול לערכת הצחצוח "הכוכבים של פהפלצת".
 האפיון המלא: [SPEC.md](SPEC.md). התוכן מהאתר הישן: [docs/old-site-content.md](docs/old-site-content.md).
 
-| שלב | מה                                        | סטטוס                             |
-| --- | ----------------------------------------- | --------------------------------- |
-| 0   | הקמה: repo, Netlify, Supabase, CI         | ✅ (Supabase ממתין לפתיחת פרויקט) |
-| 1   | דף נחיתה, מדיניות, נגישות, ביצועים        | ✅ ממתין לאישור                   |
-| 2   | רכישה: create-order, סאמיט, חשבונית, מייל | ⏳                                |
-| 3   | מעקב, פיקסלים, CAPI, דשבורד               | ⏳                                |
-| 4   | Admin                                     | ⏳                                |
-| 5   | ליטוש והשקה                               | ⏳                                |
+| שלב | מה                                        | סטטוס                          |
+| --- | ----------------------------------------- | ------------------------------ |
+| 0   | הקמה: repo, Netlify, Supabase, CI         | ✅ (Supabase ממתין למפתח תקין) |
+| 1   | דף נחיתה, מדיניות, נגישות, ביצועים        | ✅ ממתין לאישור                |
+| 2   | רכישה: create-order, סאמיט, חשבונית, מייל | ⏳                             |
+| 3   | מעקב, פיקסלים, CAPI, דשבורד               | ✅ קוד מוכן, ממתין ל-Supabase  |
+| 4   | Admin                                     | ⏳                             |
+| 5   | ליטוש והשקה                               | ⏳                             |
 
 ## מבנה
 
@@ -71,6 +71,34 @@ npm run dev
 | `npm run qa:lighthouse` | Lighthouse CI על ה-build (סף: ביצועים 85, נגישות 95)             |
 
 לבדיקות ה-QA צריך שרת: `npm run build && (cd site && npx astro preview)`.
+
+## מעקב ואנליטיקס (שלב 3)
+
+```
+דפדפן                                   שרת (Netlify Functions)              Supabase
+site/src/scripts/track.ts  ─ beacon ─▶  /api/track ── ingest_events() ──▶  sessions, events
+  (visitor/session, UTM, אירועים)        (ולידציה, rate limit, בוטים)
+site/src/scripts/checkout.ts ───────▶  /api/checkout-draft ───────────▶  abandoned_checkouts
+site/src/scripts/pixels.ts  ─ אחרי הסכמה ─▶ Meta Pixel / GA4 / TikTok (אותו event_id)
+                                       netlify/lib/conversions.ts ─▶  Meta CAPI / GA4 MP / TikTok Events API
+                                       (Purchase מהשרת אחרי אימות תשלום, שלב 2)
+admin (React) ── rpc('analytics_summary') ─────────────────────────▶  מדדים, משפך, פילוחים
+```
+
+- **מזהים:** `pp_vid` (מבקר, קבוע) ו-`pp_sess` (ביקור, 30 דקות חוסר פעילות או קמפיין חדש) ב-localStorage.
+- **אירועים:** `page_view`, `scroll_25/50/75/100`, `cta_click` (לפי `data-cta`), `view_pricing`, `select_package`,
+  `begin_checkout`, `checkout_field_filled` (שם השדה בלבד), `add_payment_info`, `coupon_applied`, `faq_open`,
+  `whatsapp_click`, `video_play`. `purchase` נדחה מהדפדפן ונרשם רק בשרת.
+- **אמינות:** שליחה ב-`sendBeacon` כל 3 שניות וביציאה מהדף, ועותק ב-sessionStorage שנשלח שוב בעמוד הבא.
+  השרת מתעלם מ-`event_id` שכבר נקלט.
+- **פרטיות:** referrer נשמר כדומיין בלבד, בלי IP (rate limit לפי hash יומי), בלי תוכן שדות. פיקסלים שיווקיים
+  רק אחרי הסכמה. בלי `PUBLIC_*_PIXEL_ID` אין באנר ואין סקריפטים חיצוניים.
+- **דשבורד:** `/admin` → כניסה עם אימייל וסיסמה (Supabase Auth, הרשמה סגורה; אדמינים מוזמנים).
+  `?demo` מציג נתוני דוגמה כשמסד הנתונים לא מחובר.
+- **הקמת Supabase:** `node scripts/setup/provision-supabase.mjs` יוצר פרויקט, מריץ migrations ושומר את
+  המפתחות ב-Netlify.
+- **בדיקות:** `npm run qa:tracking` (אירועים ושיוך), `npm run qa:pixels` (באנר ופיקסלים, דורש build עם מזהים
+  פיקטיביים), ובדיקות SQL ב-`supabase/tests/20_tracking_test.sql`.
 
 ## פריסה ל-Netlify
 

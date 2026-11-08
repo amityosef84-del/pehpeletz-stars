@@ -1,21 +1,454 @@
+/* מערכת הניהול: ממשק עבודה נקי, בהיר/כהה לפי המערכת, RTL */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
+  --bg: #f4f5f7;
+  --surface-1: #fcfcfb;
+  --surface-2: #f0f1f3;
+  --stroke: #dfe1e5;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #6b6a66;
+  --series-1: #2a78d6;
+  --series-1-soft: #d6e6f8;
+  --grid: #e8e9ec;
+  --accent: #b77700;
+  --up: #0a7d32;
+  --down: #b42318;
+  --focus: #2a78d6;
   font-family:
     system-ui,
     -apple-system,
     'Segoe UI',
     Arial,
     sans-serif;
+  font-size: 15px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) {
+    color-scheme: dark;
+    --bg: #121211;
+    --surface-1: #1a1a19;
+    --surface-2: #232322;
+    --stroke: #333331;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted: #a3a29a;
+    --series-1: #3987e5;
+    --series-1-soft: #1d3554;
+    --grid: #2a2a28;
+    --accent: #f0b03a;
+    --up: #4cc778;
+    --down: #ff8b80;
+    --focus: #6aa8f0;
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #121211;
+  --surface-1: #1a1a19;
+  --surface-2: #232322;
+  --stroke: #333331;
+  --text-primary: #f0efec;
+  --text-secondary: #c3c2b7;
+  --text-muted: #a3a29a;
+  --series-1: #3987e5;
+  --series-1-soft: #1d3554;
+  --grid: #2a2a28;
+  --accent: #f0b03a;
+  --up: #4cc778;
+  --down: #ff8b80;
+  --focus: #6aa8f0;
+}
+
+* {
+  box-sizing: border-box;
 }
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+h1,
+h2,
+p {
+  margin: 0;
+}
+a {
+  color: var(--series-1);
+}
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.muted {
+  color: var(--text-muted);
+}
+.center {
+  text-align: center;
+  padding: 40px;
+}
+.error {
+  color: var(--down);
+  font-weight: 600;
+}
+
+/* ---------- כפתורים ---------- */
+.btn {
+  font: inherit;
+  min-height: 44px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-1);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.btn--primary {
+  background: var(--series-1);
+  border-color: var(--series-1);
+  color: #fff;
+  font-weight: 700;
+}
+.btn--link {
+  border: 0;
+  background: none;
+  color: var(--series-1);
+  text-decoration: underline;
+  padding-inline: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ---------- כניסה ---------- */
+.login {
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  background: Canvas;
-  color: CanvasText;
+  padding: 16px;
 }
-.placeholder {
-  text-align: center;
-  padding: 1.5rem;
+.login__box {
+  width: min(100%, 400px);
+  display: grid;
+  gap: 10px;
+  padding: 28px;
+  border-radius: 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
+}
+.login__box h1 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+.login__box label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.login__box input {
+  font: inherit;
+  font-size: 16px;
+  min-height: 46px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* ---------- מעטפת ---------- */
+.shell {
+  display: grid;
+  min-height: 100dvh;
+}
+@media (min-width: 900px) {
+  .shell {
+    grid-template-columns: 220px 1fr;
+  }
+}
+.nav {
+  padding: 16px;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--stroke);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+}
+@media (min-width: 900px) {
+  .nav {
+    flex-direction: column;
+    align-items: stretch;
+    border-bottom: 0;
+    border-inline-end: 1px solid var(--stroke);
+  }
+}
+.nav__brand {
+  font-weight: 800;
+}
+.nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+@media (min-width: 900px) {
+  .nav ul {
+    flex-direction: column;
+  }
+}
+.nav a {
+  font-weight: 600;
+  text-decoration: none;
+}
+.nav__soon {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.nav__out {
+  margin-inline-start: auto;
+}
+.main {
+  padding: 16px;
+  min-width: 0;
+}
+@media (min-width: 900px) {
+  .main {
+    padding: 28px;
+  }
+}
+
+/* ---------- עמוד ---------- */
+.page__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.page__head h1 {
+  font-size: 1.6rem;
+}
+.badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface-1);
+}
+.seg button {
+  font: inherit;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.seg button[aria-pressed='true'] {
+  background: var(--series-1);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ---------- KPIs ---------- */
+.kpis,
+.facts {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 16px;
+}
+@media (min-width: 900px) {
+  .kpis,
+  .facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.kpi {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
+}
+.kpi__label {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+.kpi__value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.kpi__delta,
+.kpi__sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.kpi__delta.up {
+  color: var(--up);
+}
+.kpi__delta.down {
+  color: var(--down);
+}
+
+/* ---------- פאנלים וגרפים ---------- */
+.grid2,
+.grid3 {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (min-width: 1100px) {
+  .grid2 {
+    grid-template-columns: 1fr 1.3fr;
+  }
+  .grid3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.panel {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--stroke);
+  min-width: 0;
+}
+.panel__title,
+.chart__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.chart {
+  margin: 0 0 14px;
+}
+.chart__plot {
+  position: relative;
+}
+.chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.chart__grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+.chart__bar {
+  fill: var(--series-1);
+}
+.chart__bar.is-hover {
+  opacity: 0.8;
+}
+.chart__hit {
+  fill: transparent;
+  cursor: default;
+  outline: none;
+}
+.chart__hit:focus-visible {
+  fill: var(--series-1-soft);
+}
+.chart__axis {
+  fill: var(--text-muted);
+  font-size: 11px;
+}
+.chart__tip {
+  position: absolute;
+  top: 0;
+  transform: translateX(50%);
+  display: grid;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--text-primary);
+  color: var(--surface-1);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---------- משפך ---------- */
+.funnel {
+  margin: 0;
+}
+.funnel ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.funnel__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+.funnel__value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.funnel__track {
+  margin-top: 4px;
+  height: 12px;
+  border-radius: 4px;
+  background: var(--surface-2);
+}
+.funnel__bar {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--series-1);
+}
+.funnel__meta {
+  margin-top: 2px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ---------- טבלאות ---------- */
+.table-wrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.table th,
+.table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--grid);
+  text-align: start;
+  white-space: nowrap;
+}
+.table th {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.table .num {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
 }

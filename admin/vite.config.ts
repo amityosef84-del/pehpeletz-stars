@@ -6,6 +6,12 @@ import { fileURLToPath } from 'node:url';
 export default defineConfig({
   base: '/admin/',
   plugins: [react()],
+  // כתובת Supabase והמפתח הציבורי (anon) מגיעים ממשתני הסביבה של Netlify בזמן build.
+  // ה-anon key ציבורי לפי תכנון: RLS מגן על הנתונים. מפתח service_role לעולם לא נכנס לכאן.
+  define: {
+    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL ?? ''),
+    'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(process.env.SUPABASE_ANON_KEY ?? ''),
+  },
   build: {
     outDir: fileURLToPath(new URL('../site/dist/admin', import.meta.url)),
     emptyOutDir: true,
