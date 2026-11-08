@@ -69,4 +69,4 @@ export async function sendPush(
 }
 
 export const ils = (n: number) =>
-  `${Number(n).toLocaleString('he-IL', { maximumFractionDigits: 2 })} ₪`;
+  `${Number(n).toLocaleString('he-IL', { maximumFractionDigits: 2 })}\u00A0₪`;

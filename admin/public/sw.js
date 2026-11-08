@@ -25,7 +25,7 @@ self.addEventListener('fetch', (e) => {
 });
 
 self.addEventListener('push', (e) => {
-  let data = {};
+  let data;
   try {
     data = e.data ? e.data.json() : {};
   } catch {

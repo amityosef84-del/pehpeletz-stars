@@ -532,3 +532,65 @@ a {
     animation: none;
   }
 }
+
+/* ---------- ניווט ומנהלים ---------- */
+.nav__link {
+  font: inherit;
+  font-weight: 600;
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  color: var(--text-secondary);
+  cursor: pointer;
+  min-height: 36px;
+}
+.nav__link[aria-current='page'] {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.page .panel {
+  margin-bottom: 16px;
+}
+.form-row {
+  display: grid;
+  gap: 12px;
+  align-items: end;
+}
+@media (min-width: 900px) {
+  .form-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+.form-row label {
+  display: grid;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.form-row input,
+.form-row select {
+  font: inherit;
+  font-size: 16px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+.form-row input[dir='ltr'] {
+  text-align: right;
+}
+.row-actions {
+  display: flex;
+  gap: 14px;
+}
+.danger {
+  color: var(--down);
+}
+.notice--ok {
+  color: var(--up);
+  font-weight: 600;
+  margin-bottom: 12px;
+}

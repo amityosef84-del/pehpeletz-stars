@@ -5,6 +5,7 @@ import { Login } from './pages/Login';
 import { SetPassword } from './pages/SetPassword';
 import { Analytics } from './pages/Analytics';
 import { OrderAlerts } from './components/OrderAlerts';
+import { Admins } from './pages/Admins';
 
 type Gate = 'loading' | 'anon' | 'set-password' | 'not-admin' | 'admin';
 
@@ -12,6 +13,17 @@ export function App() {
   const demo = new URLSearchParams(location.search).has('demo') && !configured;
   const [gate, setGate] = useState<Gate>(demo ? 'admin' : 'loading');
   const [session, setSession] = useState<Session | null>(null);
+  const [view, setView] = useState<'analytics' | 'admins'>(() =>
+    location.hash === '#admins' ? 'admins' : 'analytics',
+  );
+  const go = (v: 'analytics' | 'admins') => {
+    setView(v);
+    history.replaceState(
+      null,
+      '',
+      v === 'admins' ? '#admins' : location.pathname + location.search,
+    );
+  };
 
   useEffect(() => {
     if (!supabase) return;
@@ -69,9 +81,24 @@ export function App() {
         <p className="nav__brand">פהפלצת · ניהול</p>
         <ul>
           <li>
-            <a href="/admin/" aria-current="page">
+            <button
+              type="button"
+              className="nav__link"
+              aria-current={view === 'analytics' ? 'page' : undefined}
+              onClick={() => go('analytics')}
+            >
               אנליטיקס
-            </a>
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              className="nav__link"
+              aria-current={view === 'admins' ? 'page' : undefined}
+              onClick={() => go('admins')}
+            >
+              מנהלים
+            </button>
           </li>
           <li className="nav__soon">הזמנות (שלב 4)</li>
           <li className="nav__soon">לקוחות (שלב 4)</li>
@@ -89,7 +116,7 @@ export function App() {
       </nav>
       <main className="main">
         <OrderAlerts demo={demo} />
-        <Analytics demo={demo} />
+        {view === 'analytics' ? <Analytics demo={demo} /> : <Admins demo={demo} />}
       </main>
     </div>
   );
